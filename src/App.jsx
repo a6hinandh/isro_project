@@ -7,6 +7,7 @@ import Services from './components/Services'
 import Footer from './components/Footer'
 import Login from './Login'
 import SpaceBackground from './components/SpaceBackground'
+import Signup from './Signup'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -15,6 +16,8 @@ function App() {
     switch(currentPage) {
       case 'login':
         return <Login onBack={() => setCurrentPage('home')} />
+      case 'signup':
+        return <Signup onLogin={() => setCurrentPage('login')} />
       case 'home':
       default:
         return (
@@ -31,7 +34,10 @@ function App() {
   return (
     <div className="text-white min-vh-100">
       <SpaceBackground />
-      <Header onLoginClick={() => setCurrentPage('login')} />
+      <Header 
+        onLoginClick={() => setCurrentPage('login')}
+        onSignupClick={() => setCurrentPage('signup')}
+      />
       {renderPage()}
     </div>
   )
