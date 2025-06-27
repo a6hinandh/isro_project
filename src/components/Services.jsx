@@ -6,6 +6,7 @@ function Services() {
       backdropFilter: 'blur(8px)',
       borderRadius: '15px',
       marginBottom: '30px',
+      marginLeft: '100px', marginRight: '100px',
       border: '1px solid rgba(255, 255, 255, 0.1)'
     }}>
       <div className="container-fluid px-5">

@@ -1,11 +1,10 @@
 function Footer() {
   return (
-    <div className="container" style={{
+    <div className="container-fluid" style={{
       backgroundColor: 'rgba(0, 0, 0, 0.2)',
       backdropFilter: 'blur(5px)',
-      borderRadius: '15px',
-      padding: '20px',
-      marginBottom: '30px',
+      paddingLeft: '40px',
+      paddingRight:'40px',
       border: '1px solid rgba(255, 255, 255, 0.1)'
     }}>
       <footer className="py-5">

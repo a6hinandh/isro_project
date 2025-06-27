@@ -1,15 +1,28 @@
 import reactLogo from '../assets/react.svg'
 
-function Header({ onLoginClick, onSignupClick }) {
+function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, currentPage }) {
+  const handleNavClick = (e, section) => {
+    e.preventDefault();
+    onNavigate('home', section);
+  };
+
+  const isActive = (section) => {
+    if (currentPage !== 'home') return false;
+    return activeSection === section;
+  };
+
   return (
-    <div className="container" style={{
+    <div className="container-fluid" style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      zIndex: 999,
       background: 'rgba(30, 34, 45, 0.45)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
       border: '1px solid rgba(255, 255, 255, 0.15)',
-      borderRadius: '20px',
-      marginTop: '16px',
-      marginBottom: '30px',
+      
+      marginBottom: '60px',
       padding: '18px 32px',
       boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)'
     }}>
@@ -20,11 +33,51 @@ function Header({ onLoginClick, onSignupClick }) {
         <div style={{ flex: 1 }}></div>
         <div className="d-flex align-items-center gap-3">
           <ul className="nav mb-2 mb-md-0 gap-3 ms-3" style={{ justifyContent: 'flex-end', display: 'flex', alignItems: 'center', marginBottom: 0 }}>
-            <li><a href="#" className="nav-link px-3 text-white fw-semibold nav-anim">Home</a></li>
-            <li><a href="#" className="nav-link px-3 text-white fw-semibold nav-anim">Features</a></li>
-            <li><a href="#" className="nav-link px-3 text-white fw-semibold nav-anim">Pricing</a></li>
-            <li><a href="#" className="nav-link px-3 text-white fw-semibold nav-anim">FAQs</a></li>
-            <li><a href="#" className="nav-link px-3 text-white fw-semibold nav-anim">About</a></li>
+            <li>
+              <a 
+                href="#" 
+                className={`nav-link px-3 fw-semibold nav-anim ${isActive('home') ? 'active-nav' : 'text-white'}`}
+                onClick={(e) => handleNavClick(e, 'home')}
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
+                className={`nav-link px-3 fw-semibold nav-anim ${isActive('features') ? 'active-nav' : 'text-white'}`}
+                onClick={(e) => handleNavClick(e, 'features')}
+              >
+                Features
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
+                className={`nav-link px-3 fw-semibold nav-anim ${isActive('pricing') ? 'active-nav' : 'text-white'}`}
+                onClick={(e) => handleNavClick(e, 'pricing')}
+              >
+                Pricing
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
+                className={`nav-link px-3 fw-semibold nav-anim ${isActive('faqs') ? 'active-nav' : 'text-white'}`}
+                onClick={(e) => handleNavClick(e, 'faqs')}
+              >
+                FAQs
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#" 
+                className={`nav-link px-3 fw-semibold nav-anim ${isActive('about') ? 'active-nav' : 'text-white'}`}
+                onClick={(e) => handleNavClick(e, 'about')}
+              >
+                About
+              </a>
+            </li>
             <li>
               <button
                 type="button"
@@ -52,11 +105,17 @@ function Header({ onLoginClick, onSignupClick }) {
         .custom-navbar .nav-anim {
           transition: color 0.2s, background 0.2s, box-shadow 0.2s;
           border-radius: 6px;
+          cursor: pointer;
         }
         .custom-navbar .nav-anim:hover {
           color: #339af0 !important;
           background: rgba(255,255,255,0.08);
           box-shadow: 0 2px 8px 0 rgba(51,154,240,0.10);
+        }
+        .custom-navbar .active-nav {
+          color: #339af0 !important;
+          background: rgba(51,154,240,0.15);
+          box-shadow: 0 2px 8px 0 rgba(51,154,240,0.15);
         }
         .custom-btn {
           transition: box-shadow 0.2s, background 0.2s, color 0.2s;
