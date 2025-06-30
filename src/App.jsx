@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import SpaceBackground from './components/SpaceBackground';
 import Login from './Login';
 import Signup from './Signup';
+import Chat from './chat';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -109,12 +110,23 @@ function App() {
     }
   };
 
+  const handleLogin = () => {
+    setCurrentPage('chat');
+  };
+
+  const handleLogout = () => {
+    setCurrentPage('login');
+    setActiveSection('');
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'login':
-        return <Login onSignup={() => setCurrentPage('signup')} />;
+        return <Login onSignup={() => setCurrentPage('signup')} onLogin={handleLogin} />;
       case 'signup':
         return <Signup onLogin={() => setCurrentPage('login')} />;
+      case 'chat':
+        return <Chat onLogout={handleLogout} />;
       case 'home':
       default:
         return (
@@ -138,19 +150,25 @@ function App() {
     }
   };
 
+  const showHeader = currentPage !== 'chat';
+
   return (
     <div className="App">
       <SpaceBackground />
-      <Header 
-        onLoginClick={() => handleNavigation('login')}
-        onSignupClick={() => handleNavigation('signup')}
-        onHomeClick={() => handleNavigation('home', 'home')}
-        onFeaturesClick={() => handleNavigation('home', 'features')}
-        onNavigate={handleNavigation}
-        activeSection={activeSection}
-        currentPage={currentPage}
-      />
-      <p style={{marginBottom:'45px'}}></p>
+      {showHeader && (
+        <>
+          <Header 
+            onLoginClick={() => handleNavigation('login')}
+            onSignupClick={() => handleNavigation('signup')}
+            onHomeClick={() => handleNavigation('home', 'home')}
+            onFeaturesClick={() => handleNavigation('home', 'features')}
+            onNavigate={handleNavigation}
+            activeSection={activeSection}
+            currentPage={currentPage}
+          />
+          <p style={{marginBottom:'45px'}}></p>
+        </>
+      )}
       {renderPage()}
     </div>
   );

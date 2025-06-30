@@ -17,25 +17,41 @@
   left: 0;
   width: 200%;
   height: 200%;
-  background: url('/twinkling.png') repeat;
+  background: url('/2.png') repeat;
   animation: twinkle 6s linear infinite;
   opacity: 0.4;
   z-index: -2;
 }
 
-/* Shooting star */
 .shooting-star {
   position: absolute;
   top: 20%;
   left: 110%;
   width: 2px;
-  height: 100px;
-  background: white;
+  height: 80px;
+  background: linear-gradient(white, rgba(255, 255, 255, 0));
   opacity: 0;
   transform: rotate(45deg);
-  animation: shoot 5s ease-in-out infinite;
-  z-index: -1;
+  box-shadow: 0 0 6px 2px white;
+  animation: shoot 3s ease-in-out infinite;
+  z-index: 1;
+  border-radius: 50%;
 }
+
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(0) rotate(45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-800px) translateY(800px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
 
 @keyframes twinkle {
   0% { transform: translate(0, 0); }

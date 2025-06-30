@@ -1,0 +1,288 @@
+.chat-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.foreground-layer {
+  position: relative;
+  display: flex;
+  height: 100%;
+  z-index: 1;
+}
+
+.sidebar {
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  padding: 30px 0 0 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  transition: width 0.3s;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+  align-items: center;
+}
+
+.sidebar:not(.collapsed) {
+  width: 300px;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.top-bar.collapsed {
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.icon-button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.primary-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #ffffff22;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  background-color: #ffffff22;
+  color: #fff;
+}
+
+.heading {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  padding: 9px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-section.collapsed {
+  justify-content: center;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  padding: 10px;
+  width: 100%;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.avatar.no-margin {
+  margin-right: 0;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.chat-container {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.chat-header {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.bot-name {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid #ffffff44;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  color: #f1f1f1;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.intro-message {
+  margin: auto;
+  text-align: center;
+  opacity: 1;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 1);
+  max-width: 600px;
+  line-height: 1.6;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 16px;
+  backdrop-filter: blur(5px);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.message-bubble.user {
+  align-self: flex-end;
+  background-color: #007bff55;
+}
+
+.message-bubble.bot {
+  align-self: flex-start;
+  background-color: #ffffff22;
+}
+
+.chat-input-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 1rem 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #0e1117;
+}
+
+.input-field {
+  flex: 1;
+  max-width: 700px;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.4;
+  backdrop-filter: blur(4px);
+  transition: background-color 0.2s ease;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #f1f1f1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.attach-mic {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

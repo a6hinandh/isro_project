@@ -1,0 +1,144 @@
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6), 0 0 40px rgba(102, 126, 234, 0.4); }
+}
+
+.login-container {
+  /* Inherits Bootstrap classes: text-white min-vh-100 */
+}
+
+.login-container .login-text {
+  color: #b8b8b8;
+}
+
+.login-container .login-card {
+  background: linear-gradient(135deg, rgba(88, 86, 214, 0.15) 0%, rgba(255, 154, 158, 0.15) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  animation: glow 4s ease-in-out infinite;
+}
+
+.login-container .card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+.login-container .card-body {
+  position: relative;
+  z-index: 1;
+}
+
+.login-container .login-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.login-container .login-icon {
+  font-size: 32px;
+  color: white;
+}
+
+.login-container .login-subtext {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+.login-container .input-wrapper {
+  position: relative;
+}
+
+.login-container .input-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  z-index: 2;
+}
+
+.login-container .modern-input {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  border-radius: 15px;
+  padding: 15px 20px 15px 55px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.login-container .modern-input:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), 0 0 20px rgba(102, 126, 234, 0.3);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.login-container .modern-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.login-container .modern-btn {
+  border-radius: 15px;
+  padding: 15px;
+  font-weight: 700;
+  font-size: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-container .modern-btn:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+}
+
+.login-container .modern-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.login-container .forgot-password,
+.login-container .signup-link {
+  color: #4dabf7;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(77, 171, 247, 0.5);
+  transition: all 0.3s ease;
+}
+
+.login-container .forgot-password:hover,
+.login-container .signup-link:hover {
+  color: #339af0;
+  transform: scale(1.05);
+}
