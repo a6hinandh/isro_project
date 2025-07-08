@@ -29,8 +29,13 @@ function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, curren
       <header
         className="d-flex flex-wrap align-items-center justify-content-between custom-navbar"
         style={{ padding: 0, background: 'none', border: 'none', boxShadow: 'none' }}
-      >
-        <div style={{ flex: 1 }}></div>
+      > 
+        <div className="d-flex align-items-center" style={{ flex: 1 }}>
+          <img src={reactLogo} alt="Logo" style={{ height: '32px', marginRight: '10px' }} />
+          <span className="fw-bold text-white fs-5">ProjectName</span>
+        </div>
+
+        
         <div className="d-flex align-items-center gap-3">
           <ul className="nav mb-2 mb-md-0 gap-3 ms-3" style={{ justifyContent: 'flex-end', display: 'flex', alignItems: 'center', marginBottom: 0 }}>
             <li>

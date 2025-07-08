@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import SpaceBackground from './components/SpaceBackground';
 import './chat.css';
+import AttachmentIcon from '@mui/icons-material/Attachment';
+import MicIcon from '@mui/icons-material/Mic';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MoreIcon from '@mui/icons-material/More';
 
 function Chat({ onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -31,20 +39,16 @@ function Chat({ onLogout }) {
       {/* Foreground: Main App Layout */}
       <div className="foreground-layer">
         {/* Sidebar */}
-        <div
-          className={`sidebar ${collapsed ? 'collapsed' : ''}`}
-        >
+        <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
           {/* Top Section */}
-          <div
-            className={`top-bar ${collapsed ? 'collapsed' : ''}`}
-          >
+          <div className={`top-bar ${collapsed ? 'collapsed' : ''}`}>
             <button className="icon-button" onClick={toggleSidebar}>
-              {collapsed ? '➤' : '✖'}
+              {collapsed ? <ArrowForwardIosIcon/> : <KeyboardArrowLeftIcon />}
             </button>
             {collapsed && (
               <>
-                <button className="icon-button">➕</button>
-                <button className="icon-button">🔎</button>
+                <button className="icon-button"><AddIcon /></button>
+                <button className="icon-button"><SearchIcon /></button>
               </>
             )}
           </div>
@@ -52,7 +56,7 @@ function Chat({ onLogout }) {
           {/* Scrollable Content */}
           {!collapsed && (
             <div className="scroll-container">
-              <button className="primary-button">➕ New Chat</button>
+              <button className="primary-button"><AddIcon/> New Chat</button>
               <input
                 type="text"
                 placeholder="Search Chats"
@@ -64,9 +68,7 @@ function Chat({ onLogout }) {
           )}
 
           {/* Fixed Bottom User Section */}
-          <div
-            className={`user-section ${collapsed ? 'collapsed' : ''}`}
-          >
+          <div className={`user-section ${collapsed ? 'collapsed' : ''}`}>
             <button className="user-button">
               <img
                 src="/profile.png"
@@ -75,6 +77,18 @@ function Chat({ onLogout }) {
               />
               {!collapsed && <span className="username">John Doe</span>}
             </button>
+  
+            {/* Settings Button */}
+            {!collapsed && (
+              <button className="settings-button">
+                <SettingsIcon 
+                  style={{ 
+                    color: '#ffffff', 
+                    fontSize: '18px' 
+                  }}
+                />
+              </button>
+            )}
           </div>
         </div>
 
@@ -90,7 +104,7 @@ function Chat({ onLogout }) {
           <div className="chat-body">
             {messages.length === 0 ? (
               <div className="intro-message fade-in">
-                <h1>👋 Welcome to AstroBot</h1>
+                <h1>Welcome to AstroBot</h1>
                 <p>Your intelligent space mission assistant.</p>
                 <p>Ask me anything about satellites, missions, or ISRO data!</p>
               </div>
@@ -111,7 +125,10 @@ function Chat({ onLogout }) {
           {/* Chat Input */}
           <div className="chat-input-section">
             <button className="icon-btn">
-              <img className="attach-mic" src="/attach.jpg" alt="Attach" />
+              <AttachmentIcon />
+            </button>
+            <button className="icon-btn">
+              <MoreIcon />
             </button>
             <input
               value={inputValue}
@@ -121,7 +138,7 @@ function Chat({ onLogout }) {
               className="input-field"
             />
             <button className="icon-btn">
-              <img className="attach-mic" src="/mic.jpg" alt="Mic" />
+              <MicIcon />
             </button>
           </div>
         </div>

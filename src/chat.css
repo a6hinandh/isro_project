@@ -286,3 +286,35 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.user-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This will space out the user button and settings button */
+  padding: 0 10px; /* Add some padding if needed */
+}
+
+.settings-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.settings-button:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* When collapsed, make the settings button smaller */
+.user-section.collapsed .settings-button {
+  padding: 6px;
+}

@@ -3,11 +3,13 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Services from './components/Services';
+import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import SpaceBackground from './components/SpaceBackground';
 import Login from './Login';
 import Signup from './Signup';
 import Chat from './chat';
+import './App.css'; // ← Add this if you haven’t
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -15,8 +17,9 @@ function App() {
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
   const servicesRef = useRef(null);
+  const faqRef = useRef(null);
   const footerRef = useRef(null);
-  
+
   useEffect(() => {
     if (currentPage !== 'home') return;
 
@@ -30,12 +33,12 @@ function App() {
         });
       },
       {
-        threshold: 0.3,
-        rootMargin: '-80px 0px -60% 0px'
+        threshold: 0.2,
+        rootMargin: '-80px 0px -50% 0px'
       }
     );
 
-    const sections = [heroRef, featuresRef, servicesRef, footerRef];
+    const sections = [heroRef, featuresRef, servicesRef, faqRef, footerRef];
     sections.forEach((ref) => {
       if (ref.current) {
         observer.observe(ref.current);
@@ -65,8 +68,7 @@ function App() {
   };
 
   const scrollToSectionInternal = (section) => {
-    const headerHeight = 80; // Fixed header height
-    
+    const headerHeight = 80;
     const scrollToElement = (element) => {
       if (element) {
         const elementPosition = element.offsetTop;
@@ -77,7 +79,7 @@ function App() {
         });
       }
     };
-    
+
     switch (section) {
       case 'home':
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -89,7 +91,7 @@ function App() {
         scrollToElement(servicesRef.current);
         break;
       case 'faqs':
-        scrollToElement(footerRef.current);
+        scrollToElement(faqRef.current);
         break;
       case 'about':
         scrollToElement(footerRef.current);
@@ -131,19 +133,12 @@ function App() {
       default:
         return (
           <>
-            <div style={{ paddingTop: '80px' }}>
-              <div ref={heroRef} data-section="home">
-                <Hero />
-              </div>
-              <div ref={featuresRef} data-section="features">
-                <Features />
-              </div>
-              <div ref={servicesRef} data-section="pricing">
-                <Services />
-              </div>
-              <div ref={footerRef} data-section="about">
-                <Footer />
-              </div>
+            <div className="content-container">
+              <div ref={heroRef} data-section="home"><Hero /></div>
+              <div ref={featuresRef} data-section="features"><Features /></div>
+              <div ref={servicesRef} data-section="pricing"><Services /></div>
+              <div ref={faqRef} data-section="faqs"><FAQ /></div>
+              <div ref={footerRef} data-section="about"><Footer /></div>
             </div>
           </>
         );
@@ -166,7 +161,6 @@ function App() {
             activeSection={activeSection}
             currentPage={currentPage}
           />
-          <p style={{marginBottom:'45px'}}></p>
         </>
       )}
       {renderPage()}
