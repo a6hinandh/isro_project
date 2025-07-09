@@ -6,10 +6,11 @@ import Services from './components/Services';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import SpaceBackground from './components/SpaceBackground';
+import LearnMore from './components/LearnMore'; 
 import Login from './Login';
 import Signup from './Signup';
 import Chat from './chat';
-import './App.css'; // ← Add this if you haven’t
+import './App.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -129,12 +130,20 @@ function App() {
         return <Signup onLogin={() => setCurrentPage('login')} />;
       case 'chat':
         return <Chat onLogout={handleLogout} />;
+      case 'learnMore':
+        return (
+          <>
+            <div className="content-container">
+              <LearnMore />
+            </div>
+          </>
+        );
       case 'home':
       default:
         return (
           <>
             <div className="content-container">
-              <div ref={heroRef} data-section="home"><Hero /></div>
+              <div ref={heroRef} data-section="home"><Hero onLearnMoreClick={() => setCurrentPage('learnMore')} /></div>
               <div ref={featuresRef} data-section="features"><Features /></div>
               <div ref={servicesRef} data-section="pricing"><Services /></div>
               <div ref={faqRef} data-section="faqs"><FAQ /></div>

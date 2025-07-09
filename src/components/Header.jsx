@@ -31,8 +31,8 @@ function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, curren
         style={{ padding: 0, background: 'none', border: 'none', boxShadow: 'none' }}
       > 
         <div className="d-flex align-items-center" style={{ flex: 1 }}>
-          <img src={reactLogo} alt="Logo" style={{ height: '32px', marginRight: '10px' }} />
-          <span className="fw-bold text-white fs-5">ProjectName</span>
+          <img src="logo.jpg" alt="Logo" style={{ height: '32px', marginRight: '10px' }} />
+          <span className="fw-bold text-white fs-5">Astra-Q</span>
         </div>
 
         
@@ -62,7 +62,7 @@ function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, curren
                 className={`nav-link px-3 fw-semibold nav-anim ${isActive('pricing') ? 'active-nav' : 'text-white'}`}
                 onClick={(e) => handleNavClick(e, 'pricing')}
               >
-                Pricing
+                Services
               </a>
             </li>
             <li>

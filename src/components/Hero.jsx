@@ -1,6 +1,5 @@
 import isroRegistered from '../assets/isro-registered.jpg'
-
-function Hero() {
+function Hero({ onLearnMoreClick }) {
   return (
     <div className="container fluid "
       style={{
@@ -24,11 +23,12 @@ function Hero() {
           }}/> 
         </div> 
         <div className="col-lg-6"> 
-          <h1 className="display-5 fw-bold lh-1 mb-3" style={{ color: '#339af0' }}>Lorem ipsum dolor sit amet, consectetur</h1>
-          <p className="lead text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec velit vulputate, lacinia libero in, elementum ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum blandit erat in est porta suscipit. Vivamus blandit leo id tempor cursus. Nulla facilisi. Etiam finibus vel nisi in elementum.</p> 
+          <h1 className="display-5 fw-bold lh-1 mb-3" style={{ color: '#339af0' }}>Astra-Q: Intelligence from Orbit, Delivered by AI</h1>
+          <p className="lead text-white">AI-powered assistant designed to simplify access to ISRO's remote sensing datasets and satellite-derived products through natural, conversational queries.</p> 
           <div className="d-grid gap-2 d-md-flex justify-content-md-start"> 
-            <button type="button" className="btn btn-info text-dark btn-lg px-4 me-md-2">Primary</button> 
-            <button type="button" className="btn btn-outline-light btn-lg px-4">Default</button> 
+            <button type="button" className="btn btn-info text-dark btn-lg px-4 me-md-2 text-white">Try Astra-Q</button> 
+            <button type="button" className="btn btn-outline-light btn-lg px-4" onClick={onLearnMoreClick}>Learn more</button>
+
           </div> 
         </div> 
       </div> 

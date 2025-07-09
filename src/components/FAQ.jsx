@@ -180,25 +180,7 @@ function FAQ() {
             >
               Contact Us
             </button>
-            <button 
-              className="btn btn-outline-light ms-3 px-4 py-2"
-              style={{
-                borderRadius: '8px',
-                fontWeight: '600',
-                fontSize: '1rem',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                e.target.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-                e.target.style.transform = 'translateY(0)';
-              }}
-            >
-              View All Services
-            </button>
+            
           </div>
         </div>
       </div>
