@@ -202,7 +202,7 @@ function Chat({ onLogout }) {
 
         <div className="chat-container">
           <div className="chat-header">
-            <h3 className="bot-name">AstroBot 🚀</h3>
+            <h3 className="bot-name">Astra-Q 🚀</h3>
             <div>
               <button 
                 className="logout-btn" 
@@ -218,7 +218,8 @@ function Chat({ onLogout }) {
           <div className="chat-body">
             {messages.length === 0 ? (
               <div className="intro-message fade-in">
-                <h1 style={{ fontSize: '24px' }}>Welcome to AstroBot</h1>
+                <h1 style={{ fontSize: '24px' }}>Welcome to Astra-Q</h1>
+                <p>Astra-Q : Space-Query</p>
                 <p>Your intelligent space mission assistant.</p>
                 <p>Ask me anything about satellites, missions, or ISRO data!</p>
               </div>
@@ -682,13 +683,14 @@ function Chat({ onLogout }) {
       // Knowledge Graph Explorer JSX Component
 <PopupModal isOpen={modals.knowledgeGraph} onClose={() => toggleModal('knowledgeGraph')} title="Knowledge Graph Explorer">
   <div className="knowledge-graph-container">
+    
     {/* Left Sidebar */}
     <div className="knowledge-graph-sidebar">
       <div className="search-section">
         <div className="search-container">
           <input
             type="text"
-            placeholder="Search for entities, relationships, or concepts..."
+            placeholder="Search any entity, relationship, or concept..."
             className="search-input"
           />
           <button className="search-button">
@@ -697,7 +699,7 @@ function Chat({ onLogout }) {
         </div>
         <div className="action-buttons">
           <button className="action-button">
-            🔧 Advanced Filters
+            ⚙️ Advanced Options
           </button>
           <button className="action-button">
             📊 Export Graph
@@ -705,27 +707,14 @@ function Chat({ onLogout }) {
         </div>
       </div>
 
-      <div className="filter-section">
-        <h3 className="filter-title">Filter by Domain</h3>
-        <div className="filter-options">
-          <div className="filter-option active">
-            📡 All Domains
-          </div>
-          <div className="filter-option inactive">
-            🛰️ Satellites
-          </div>
-          <div className="filter-option inactive">
-            🌤️ Weather
-          </div>
-          <div className="filter-option inactive">
-            🚀 Missions
-          </div>
-          <div className="filter-option inactive">
-            📍 Locations
-          </div>
-        </div>
+      <div className="explore-info">
+        <h3 className="filter-title">Explore Freely</h3>
+        <p className="filter-description">
+          No domain restrictions — search and visualize any connected data across the knowledge graph.
+        </p>
       </div>
 
+      {/* Optional View Tabs */}
       <div className="view-tabs">
         <button className="view-tab active">
           Graph View
@@ -751,14 +740,14 @@ function Chat({ onLogout }) {
         <h2 className="graph-title">
           Interactive Network Graph
         </h2>
-        
+
         <div className="graph-nodes-container">
           <div className="graph-node chandrayaan">
             Chandrayaan
           </div>
-          
+
           <div className="connection-line"></div>
-          
+
           <div className="graph-node cartosat">
             Cartosat
           </div>
@@ -768,13 +757,13 @@ function Chat({ onLogout }) {
           <div className="graph-icon">
             <div className="graph-icon-inner"></div>
           </div>
-          
+
           <div className="graph-info-text">
             <p className="graph-info-title">
               Interactive Knowledge Graph
             </p>
             <p className="graph-info-subtitle">
-              Click on nodes to explore relationships
+              Click on any node to explore relationships and paths
             </p>
           </div>
         </div>
@@ -786,6 +775,7 @@ function Chat({ onLogout }) {
     </div>
   </div>
 </PopupModal>
+
     </div>
   );
 }
