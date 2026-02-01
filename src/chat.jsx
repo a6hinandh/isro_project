@@ -54,8 +54,8 @@ function Chat({ onLogout }) {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [selectedTime, setSelectedTime] = useState(0);
+  const [zoomLevel_] = useState(1); // unused, kept for future
+  const [selectedTime_, setSelectedTime_] = useState(0); // unused, kept for future
   const [loading, setLoading] = useState(false);
 
   // user + thread state
@@ -113,7 +113,7 @@ function Chat({ onLogout }) {
     knowledgeGraph: false,
   });
 
-  const satelliteImages = [
+  const satelliteImages_ = [
     {
       timestamp: '2025-07-01T08:00:00Z',
       url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace.jpg',
@@ -180,7 +180,7 @@ function Chat({ onLogout }) {
       };
 
       setMessages([...newMessages, botMsg]);
-    } catch (err) {
+    } catch {
       const errMsg = {
         type: 'bot',
         text: "Backend error. Please try again.",
@@ -225,14 +225,6 @@ function Chat({ onLogout }) {
     return diffDays === 0
       ? 'Today'
       : `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
-  };
-
-  const handleZoom = (direction) => {
-    setZoomLevel((prev) =>
-      direction === 'in'
-        ? Math.min(prev + 0.2, 3)
-        : Math.max(prev - 0.2, 0.5)
-    );
   };
 
   const openThread = async (threadId) => {
