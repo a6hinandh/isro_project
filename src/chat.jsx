@@ -54,8 +54,6 @@ function Chat({ onLogout }) {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [zoomLevel_] = useState(1); // unused, kept for future
-  const [selectedTime_, setSelectedTime_] = useState(0); // unused, kept for future
   const [loading, setLoading] = useState(false);
 
   // user + thread state
@@ -112,21 +110,6 @@ function Chat({ onLogout }) {
     visualizer: false,
     knowledgeGraph: false,
   });
-
-  const satelliteImages_ = [
-    {
-      timestamp: '2025-07-01T08:00:00Z',
-      url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace.jpg',
-    },
-    {
-      timestamp: '2025-07-02T08:00:00Z',
-      url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace2.jpg',
-    },
-    {
-      timestamp: '2025-07-03T08:00:00Z',
-      url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace3.jpg',
-    },
-  ];
 
   // Auto-scroll to bottom effect
   useEffect(() => {
