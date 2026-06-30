@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+import { useAuth } from "./AuthContext";
 import './login.css';
 
 function Login({ onSignup, onLogin }) {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -15,10 +19,30 @@ function Login({ onSignup, onLogin }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login submitted:', formData);
-    onLogin();
+    setError('');
+    setLoading(true);
+
+    try {
+      await login(formData.email, formData.password);
+      onLogin();
+    } catch (err) {
+      const code = err.code;
+      if (code === 'auth/user-not-found') {
+        setError('No account found with this email.');
+      } else if (code === 'auth/wrong-password') {
+        setError('Incorrect password.');
+      } else if (code === 'auth/invalid-email') {
+        setError('Invalid email address.');
+      } else if (code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please try again later.');
+      } else {
+        setError('Login failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,6 +78,19 @@ function Login({ onSignup, onLogin }) {
                                   Enter your credentials to continue
                                 </p>
                               </div>
+                              {error && (
+                                <div style={{
+                                  backgroundColor: 'rgba(255, 59, 48, 0.15)',
+                                  border: '1px solid rgba(255, 59, 48, 0.3)',
+                                  borderRadius: '10px',
+                                  padding: '10px 14px',
+                                  marginBottom: '16px',
+                                  color: '#ff6b6b',
+                                  fontSize: '14px',
+                                }}>
+                                  {error}
+                                </div>
+                              )}
                               <form onSubmit={handleSubmit}>
                                 <div className="form-outline mb-4">
                                   <div className="input-wrapper">
@@ -66,6 +103,7 @@ function Login({ onSignup, onLogin }) {
                                       value={formData.email}
                                       onChange={handleInputChange}
                                       placeholder=" Email Address"
+                                      required
                                     />
                                   </div>
                                 </div>
@@ -80,14 +118,16 @@ function Login({ onSignup, onLogin }) {
                                       value={formData.password}
                                       onChange={handleInputChange}
                                       placeholder=" Password"
+                                      required
                                     />
                                   </div>
                                 </div>
                                 <button 
                                   type="submit" 
                                   className="btn btn-primary btn-block mb-4 w-100 modern-btn"
+                                  disabled={loading}
                                 >
-                                  🚀 ACCESS GRANTED
+                                  {loading ? '⏳ Signing in...' : '🚀 ACCESS GRANTED'}
                                 </button>
                                 <div className="d-flex justify-content-between align-items-center">
                                   <button

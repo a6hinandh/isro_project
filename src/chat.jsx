@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from './AuthContext';
 import SpaceBackground from './components/SpaceBackground';
 import './chat.css';
 import AttachmentIcon from '@mui/icons-material/Attachment';
@@ -16,7 +17,7 @@ import FeedbackIcon from '@mui/icons-material/Feedback';
 import SatelliteIcon from '@mui/icons-material/Satellite';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 function PopupModal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
@@ -50,36 +51,21 @@ function PopupModal({ isOpen, onClose, title, children }) {
 }
 
 function Chat({ onLogout }) {
+  const { user, logout, getToken } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
-  // user + thread state
-  const [userId] = useState("user_123");
-  const [currentThreadId, setCurrentThreadId] = useState("default_thread");
+  // thread state
+  const [currentThreadId, setCurrentThreadId] = useState(null);
+  const [threads, setThreads] = useState([]);
+  const [threadsLoading, setThreadsLoading] = useState(false);
 
   // Auto-scroll ref
   const chatContainerRef = useRef(null);
-
-  const [history, setHistory] = useState([
-    {
-      type: 'user',
-      text: 'Tell me about Chandrayaan-3',
-      timestamp: '2025-07-05T10:00:00Z',
-    },
-    {
-      type: 'bot',
-      text: "Chandrayaan-3 is ISRO's third lunar mission...",
-      timestamp: '2025-07-05T10:01:00Z',
-    },
-    {
-      type: 'user',
-      text: 'What satellites are in GEO?',
-      timestamp: '2025-07-04T15:30:00Z',
-    },
-  ]);
 
   const [favorites, setFavorites] = useState([
     {
@@ -111,6 +97,32 @@ function Chat({ onLogout }) {
     knowledgeGraph: false,
   });
 
+
+
+  const fetchThreads = async () => {
+    setThreadsLoading(true);
+    try {
+      const token = await getToken();
+      const res = await fetch(`${API_BASE}/threads`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!res.ok) throw new Error("Failed to load threads");
+      const data = await res.json();
+      setThreads(data);
+    } catch (e) {
+      console.error("Failed to fetch threads:", e);
+    } finally {
+      setThreadsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchThreads();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Auto-scroll to bottom effect
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -132,19 +144,20 @@ function Chat({ onLogout }) {
 
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
-    setHistory([...history, userMsg]);
     setInputValue("");
     setLoading(true);
 
     try {
+      const token = await getToken();
       const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
-          user_id: userId,
           thread_id: currentThreadId,
           message: userMsg.text,
-          history: [], // backend keeps history per thread
         }),
       });
 
@@ -163,6 +176,7 @@ function Chat({ onLogout }) {
       };
 
       setMessages([...newMessages, botMsg]);
+      fetchThreads();
     } catch {
       const errMsg = {
         type: 'bot',
@@ -189,7 +203,12 @@ function Chat({ onLogout }) {
     setIsFavorite(!isFavorite);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (e) {
+      console.error("Logout error:", e);
+    }
     if (onLogout) {
       onLogout();
     }
@@ -210,12 +229,20 @@ function Chat({ onLogout }) {
       : `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
   };
 
+
+
   const openThread = async (threadId) => {
     setCurrentThreadId(threadId);
 
     try {
+      const token = await getToken();
       const res = await fetch(
-        `${API_BASE}/thread/${threadId}?user_id=${userId}`
+        `${API_BASE}/thread/${threadId}`,
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        }
       );
       if (!res.ok) throw new Error("Failed to load thread");
 
@@ -285,6 +312,29 @@ function Chat({ onLogout }) {
                   marginBottom: '15px',
                 }}
               />
+              {threadsLoading ? (
+                <p style={{ color: '#aaa', fontSize: '13px', textAlign: 'center' }}>Loading threads...</p>
+              ) : threads.length === 0 ? (
+                <p style={{ color: '#aaa', fontSize: '13px', textAlign: 'center' }}>No threads yet</p>
+              ) : (
+                threads.map((thread) => (
+                  <button
+                    key={thread.thread_id}
+                    className="primary-button"
+                    style={{
+                      padding: '8px',
+                      fontSize: '13px',
+                      textAlign: 'left',
+                      backgroundColor: currentThreadId === thread.thread_id ? 'rgba(255,255,255,0.2)' : undefined,
+                    }}
+                    onClick={() => openThread(thread.thread_id)}
+                  >
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
+                      {thread.title || thread.last_message || 'Untitled'}
+                    </span>
+                  </button>
+                ))
+              )}
               <h5
                 className="heading"
                 style={{ fontSize: '16px', marginBottom: '8px' }}
@@ -384,7 +434,7 @@ function Chat({ onLogout }) {
               />
               {!collapsed && (
                 <span className="username" style={{ fontSize: '14px' }}>
-                  John Doe
+                  {user?.email || 'User'}
                 </span>
               )}
             </button>
@@ -550,14 +600,25 @@ function Chat({ onLogout }) {
           title="Chat History"
         >
           <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            {history.length === 0 ? (
-              <p>No chat history available.</p>
+            {threads.length === 0 ? (
+              <p>No threads yet.</p>
             ) : (
-              history.map((msg, index) => (
-                <div key={index} className="modal-section">
-                  <div className="section-text">{msg.text}</div>
+              threads.map((thread) => (
+                <div
+                  key={thread.thread_id}
+                  className="modal-section"
+                  onClick={() => {
+                    openThread(thread.thread_id);
+                    toggleModal('history');
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="section-text">
+                    {thread.title || thread.last_message || 'Untitled'}
+                  </div>
                   <div className="section-meta">
-                    {formatTimestamp(msg.timestamp)}
+                    {thread.message_count} message{thread.message_count !== 1 ? 's' : ''}
+                    {thread.updated_at && ` · ${formatTimestamp(thread.updated_at)}`}
                   </div>
                 </div>
               ))

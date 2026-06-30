@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useAuth } from "./AuthContext";
 import './signup.css';
 
 function Signup({ onLogin }) {
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -10,6 +12,8 @@ function Signup({ onLogin }) {
     password: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,9 +23,39 @@ function Signup({ onLogin }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup submitted:', formData);
+    setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await signup(formData.email, formData.password);
+      onLogin();
+    } catch (err) {
+      const code = err.code;
+      if (code === 'auth/email-already-in-use') {
+        setError('An account with this email already exists.');
+      } else if (code === 'auth/invalid-email') {
+        setError('Invalid email address.');
+      } else if (code === 'auth/weak-password') {
+        setError('Password is too weak.');
+      } else {
+        setError('Signup failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,6 +94,19 @@ function Signup({ onLogin }) {
                               </div>
                               <h3 className="text-white mb-3 fw-bold">Join Us Today</h3>
                             </div>
+                            {error && (
+                              <div style={{
+                                backgroundColor: 'rgba(255, 59, 48, 0.15)',
+                                border: '1px solid rgba(255, 59, 48, 0.3)',
+                                borderRadius: '10px',
+                                padding: '10px 14px',
+                                marginBottom: '16px',
+                                color: '#ff6b6b',
+                                fontSize: '14px',
+                              }}>
+                                {error}
+                              </div>
+                            )}
                             <form onSubmit={handleSubmit}>
                               <div className="row">
                                 <div className="col-md-6">
@@ -148,8 +195,9 @@ function Signup({ onLogin }) {
                               <button 
                                 type="submit" 
                                 className="btn btn-primary btn-block mb-4 w-100 modern-btn"
+                                disabled={loading}
                               >
-                                🚀 Create Account
+                                {loading ? '⏳ Creating Account...' : '🚀 Create Account'}
                               </button>
                               <div className="text-center">
                                 <span className="me-2 signup-subtext">Already have an account?</span>
