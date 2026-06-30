@@ -1,5 +1,3 @@
-import reactLogo from '../assets/react.svg'
-
 function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, currentPage }) {
   const handleNavClick = (e, section) => {
     e.preventDefault();
@@ -21,7 +19,6 @@ function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, curren
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
       border: '1px solid rgba(255, 255, 255, 0.15)',
-      
       marginBottom: '60px',
       padding: '18px 32px',
       boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)'
@@ -29,13 +26,12 @@ function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, curren
       <header
         className="d-flex flex-wrap align-items-center justify-content-between custom-navbar"
         style={{ padding: 0, background: 'none', border: 'none', boxShadow: 'none' }}
-      > 
+      >
         <div className="d-flex align-items-center" style={{ flex: 1 }}>
           <img src="logo.jpg" alt="Logo" style={{ height: '32px', marginRight: '10px' }} />
           <span className="fw-bold text-white fs-5">Astra-Q</span>
         </div>
 
-        
         <div className="d-flex align-items-center gap-3">
           <ul className="nav mb-2 mb-md-0 gap-3 ms-3" style={{ justifyContent: 'flex-end', display: 'flex', alignItems: 'center', marginBottom: 0 }}>
             <li>
@@ -136,4 +132,4 @@ function Header({ onLoginClick, onSignupClick, onNavigate, activeSection, curren
   );
 }
 
-export default Header
+export default Header;
