@@ -56,8 +56,7 @@ function Chat({ onLogout }) {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [selectedTime, setSelectedTime] = useState(0);
+
   const [loading, setLoading] = useState(false);
 
   // thread state
@@ -98,20 +97,7 @@ function Chat({ onLogout }) {
     knowledgeGraph: false,
   });
 
-  const satelliteImages = [
-    {
-      timestamp: '2025-07-01T08:00:00Z',
-      url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace.jpg',
-    },
-    {
-      timestamp: '2025-07-02T08:00:00Z',
-      url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace2.jpg',
-    },
-    {
-      timestamp: '2025-07-03T08:00:00Z',
-      url: 'https://www.isro.gov.in/media/isro/image/SatImages/IndiaFromSpace3.jpg',
-    },
-  ];
+
 
   const fetchThreads = async () => {
     setThreadsLoading(true);
@@ -134,6 +120,7 @@ function Chat({ onLogout }) {
 
   useEffect(() => {
     fetchThreads();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-scroll to bottom effect
@@ -190,7 +177,7 @@ function Chat({ onLogout }) {
 
       setMessages([...newMessages, botMsg]);
       fetchThreads();
-    } catch (err) {
+    } catch {
       const errMsg = {
         type: 'bot',
         text: "Backend error. Please try again.",
@@ -242,13 +229,7 @@ function Chat({ onLogout }) {
       : `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
   };
 
-  const handleZoom = (direction) => {
-    setZoomLevel((prev) =>
-      direction === 'in'
-        ? Math.min(prev + 0.2, 3)
-        : Math.max(prev - 0.2, 0.5)
-    );
-  };
+
 
   const openThread = async (threadId) => {
     setCurrentThreadId(threadId);
