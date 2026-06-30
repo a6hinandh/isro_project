@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { AuthProvider, useAuth } from './AuthContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -12,7 +13,8 @@ import Signup from './Signup';
 import Chat from './chat';
 import './App.css';
 
-function App() {
+function AppContent() {
+  const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('home');
   const [activeSection, setActiveSection] = useState('home');
   const heroRef = useRef(null);
@@ -118,9 +120,20 @@ function App() {
   };
 
   const handleLogout = () => {
-    setCurrentPage('login');
+    setCurrentPage('home');
     setActiveSection('');
   };
+
+  if (loading) {
+    return (
+      <div className="App" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <SpaceBackground />
+        <div style={{ position: 'relative', zIndex: 1, color: '#fff', fontSize: '18px' }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   const renderPage = () => {
     switch (currentPage) {
@@ -129,6 +142,10 @@ function App() {
       case 'signup':
         return <Signup onLogin={() => setCurrentPage('login')} />;
       case 'chat':
+        if (!user) {
+          setCurrentPage('login');
+          return <Login onSignup={() => setCurrentPage('signup')} onLogin={handleLogin} />;
+        }
         return <Chat onLogout={handleLogout} />;
       case 'learnMore':
         return (
@@ -174,6 +191,14 @@ function App() {
       )}
       {renderPage()}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
