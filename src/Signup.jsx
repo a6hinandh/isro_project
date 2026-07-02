@@ -5,9 +5,6 @@ import './signup.css';
 function Signup({ onLogin }) {
   const { signup } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    age: '',
-    phone: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -108,48 +105,6 @@ function Signup({ onLogin }) {
                               </div>
                             )}
                             <form onSubmit={handleSubmit}>
-                              <div className="row">
-                                <div className="col-md-6">
-                                  <div className="form-outline mb-4">
-                                    <input
-                                      type="text"
-                                      id="name"
-                                      name="name"
-                                      className="form-control modern-input"
-                                      value={formData.name}
-                                      onChange={handleInputChange}
-                                      placeholder="Full Name"
-                                      required
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-md-6">
-                                  <div className="form-outline mb-4">
-                                    <input
-                                      type="number"
-                                      id="age"
-                                      name="age"
-                                      className="form-control modern-input"
-                                      value={formData.age}
-                                      onChange={handleInputChange}
-                                      placeholder="Age"
-                                      required
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="form-outline mb-4">
-                                <input
-                                  type="tel"
-                                  id="phone"
-                                  name="phone"
-                                  className="form-control modern-input"
-                                  value={formData.phone}
-                                  onChange={handleInputChange}
-                                  placeholder=" Phone Number"
-                                  required
-                                />
-                              </div>
                               <div className="form-outline mb-4">
                                 <input
                                   type="email"
