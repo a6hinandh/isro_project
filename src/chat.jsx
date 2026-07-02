@@ -133,8 +133,10 @@ function Chat({ onLogout }) {
 
   const toggleSidebar = () => setCollapsed(!collapsed);
 
+  const MAX_MESSAGE_LENGTH = 4000;
+
   const handleSend = async () => {
-    if (inputValue.trim() === "" || loading) return;
+    if (inputValue.trim() === "" || loading || inputValue.length > MAX_MESSAGE_LENGTH) return;
 
     const userMsg = {
       type: 'user',
@@ -580,6 +582,7 @@ function Chat({ onLogout }) {
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Type your message..."
                 className="input-field"
+                maxLength={MAX_MESSAGE_LENGTH}
                 style={{ fontSize: '14px' }}
               />
               <button
