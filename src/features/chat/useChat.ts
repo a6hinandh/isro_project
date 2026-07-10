@@ -84,7 +84,7 @@ export function useChat(initialThreadId: string | null = null) {
           .then((prefs) => {
             if (prefs && prefs.voice_responses) {
               const cleanText = (data.answer || "")
-                .replace(/[*#`_\-]/g, "")
+                .replace(/[*#`_-]/g, "")
                 .replace(/\[Attached file:[^\]]+\]/g, "")
                 .slice(0, 1000);
               const utterance = new SpeechSynthesisUtterance(cleanText);
