@@ -28,7 +28,7 @@ function SourcesPanel({ message }: { message: UIMessage }) {
       {open && (
         <ul className="mt-2 space-y-2">
           {sources.map((s, i) => (
-            <li key={i} className="rounded-lg bg-black/20 p-2.5 text-xs">
+            <li key={i} className="rounded-xl bg-black/20 p-3 text-xs border border-white/5">
               <div className="mb-1 font-semibold text-accent-300">
                 {s.source}
                 {s.page != null && <span className="text-slate-400"> · p. {s.page}</span>}
@@ -37,7 +37,7 @@ function SourcesPanel({ message }: { message: UIMessage }) {
                 <p className="line-clamp-3 text-slate-400">{s.content_preview}</p>
               )}
               {s.cypher && (
-                <pre className="mt-1.5 overflow-x-auto rounded bg-black/40 p-2 text-[11px] text-nebula-300">
+                <pre className="mt-1.5 overflow-x-auto rounded-lg bg-black/40 p-2.5 text-[11px] text-nebula-300 border border-white/5">
                   <code>{s.cypher}</code>
                 </pre>
               )}
@@ -63,8 +63,8 @@ export function MessageBubble({ message }: { message: UIMessage }) {
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[75%]",
           isUser
-            ? "rounded-br-md bg-accent-500/90 text-white"
-            : "glass rounded-bl-md text-slate-100",
+            ? "rounded-br-md bg-gradient-to-br from-accent-500 to-accent-600 text-white shadow-lg shadow-accent-500/20"
+            : "glass-strong rounded-bl-md text-slate-100 border border-white/5",
         )}
       >
         {isUser ? (

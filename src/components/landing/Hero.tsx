@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Rocket, BookOpen } from "lucide-react";
+import { Rocket, BookOpen, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { GlassPanel } from "@/components/ui/GlassPanel";
 import { useAuth } from "@/context/AuthContext";
 import isroRegistered from "@/assets/isro-registered.jpg";
 
@@ -11,50 +10,76 @@ export function Hero() {
   const { user } = useAuth();
 
   return (
-    <GlassPanel className="overflow-hidden p-6 sm:p-10">
-      <div className="flex flex-col-reverse items-center gap-10 lg:flex-row">
+    <section className="relative overflow-hidden pt-2 pb-10 md:pt-4 md:pb-14 lg:pt-6 lg:pb-16">
+      <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-center lg:gap-16">
+        
+        {/* Left Column: Headline and Content */}
         <motion.div
-          initial={{ opacity: 0, x: -24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex-1"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex-1 text-center lg:text-left"
         >
-          <h1 className="mb-4 text-4xl leading-tight font-bold text-accent-400 sm:text-5xl">
+          <h1 className="bg-gradient-to-r from-white via-slate-100 to-accent-300 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl md:text-6xl">
             Intelligence from Orbit,
             <br />
-            Delivered by AI
+            <span className="bg-gradient-to-r from-accent-400 to-nebula-400 bg-clip-text">
+              Delivered by AstraQ.
+            </span>
           </h1>
-          <p className="mb-8 max-w-xl text-lg text-slate-300">
-            Astra-Q simplifies access to ISRO&apos;s remote sensing datasets and
-            satellite-derived products through natural, conversational queries —
-            powered by hybrid RAG and knowledge-graph reasoning.
+
+          <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg max-w-2xl">
+            Simplify access to satellite datasets and remote sensing observations. 
+            AstraQ processes scientific inquiries into grounded, readable summaries, linking 
+            documentation and product relationships under a single conversational interface.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Button size="lg" onClick={() => navigate(user ? "/chat" : "/signup")}>
-              <Rocket size={18} /> Try Astra-Q
+
+          <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
+            <Button
+              size="lg"
+              className="relative overflow-hidden group font-semibold"
+              onClick={() => navigate(user ? "/chat" : "/signup")}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <Rocket size={18} />
+                Try AstraQ
+                <ChevronRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </span>
             </Button>
-            <Button variant="secondary" size="lg" onClick={() => navigate("/learn-more")}>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => navigate("/learn-more")}
+            >
               <BookOpen size={18} /> Learn more
             </Button>
           </div>
         </motion.div>
 
+        {/* Right Column: Visual Preview Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md flex-1 lg:max-w-none"
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="relative flex w-full max-w-[500px] flex-col items-center justify-center rounded-3xl border border-white/10 bg-space-900/40 p-4 shadow-[0_24px_50px_rgba(0,0,0,0.5)] backdrop-blur-md"
         >
-          <img
-            src={isroRegistered}
-            alt="ISRO satellite imagery"
-            width={700}
-            height={500}
-            loading="lazy"
-            className="w-full rounded-2xl border border-white/10 bg-black mix-blend-lighten shadow-2xl"
-          />
+          {/* Subtle glow layer behind image */}
+          <div className="absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent-500/10 via-transparent to-transparent opacity-50" />
+
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
+            <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-accent-500/20 to-nebula-500/20 opacity-30 blur-sm" />
+            <img
+              src={isroRegistered}
+              alt="AstraQ satellite visualization"
+              width={700}
+              height={500}
+              loading="lazy"
+              className="relative w-full rounded-2xl bg-black object-cover transition-transform duration-500 hover:scale-[1.02]"
+            />
+          </div>
         </motion.div>
+
       </div>
-    </GlassPanel>
+    </section>
   );
 }

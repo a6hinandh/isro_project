@@ -42,9 +42,10 @@ export interface ThreadItem {
 }
 
 export interface Preferences {
-  theme: string;
-  language: string;
   display_name: string;
+  voice_responses: boolean;
+  system_persona: string;
+  llm_temperature: number;
 }
 
 export interface SearchResult {

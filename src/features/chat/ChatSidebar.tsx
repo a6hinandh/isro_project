@@ -14,6 +14,7 @@ import {
   Trash2,
   MessageSquareHeart,
   CircleHelp,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ThreadItem } from "@/lib/types";
@@ -31,6 +32,7 @@ interface ChatSidebarProps {
   onDeleteThread: (threadId: string) => void;
   onOpenModal: (name: ChatModalName) => void;
   userEmail: string | null;
+  displayName?: string | null;
   onLogout: () => void;
 }
 
@@ -58,6 +60,7 @@ export function ChatSidebar({
   onDeleteThread,
   onOpenModal,
   userEmail,
+  displayName,
   onLogout,
 }: ChatSidebarProps) {
   const navigate = useNavigate();
@@ -69,11 +72,11 @@ export function ChatSidebar({
       className="glass-strong flex h-full shrink-0 flex-col overflow-hidden rounded-none border-y-0 border-l-0"
     >
       {/* Top bar */}
-      <div className={cn("flex items-center gap-1 p-2", collapsed ? "flex-col" : "justify-between")}>
+      <div className={cn("flex items-center gap-1 p-2.5", collapsed ? "flex-col" : "justify-between")}>
         {!collapsed && (
           <button
             onClick={onNewChat}
-            className="flex flex-1 cursor-pointer items-center gap-2 rounded-lg bg-accent-500/15 px-3 py-2 text-sm font-semibold text-accent-300 transition-colors hover:bg-accent-500/25"
+            className="flex flex-1 cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-accent-500/20 to-accent-500/10 px-3.5 py-2.5 text-sm font-bold text-accent-300 transition-all hover:from-accent-500/30 hover:to-accent-500/15 hover:shadow-lg hover:shadow-accent-500/10"
           >
             <MessageCirclePlus size={16} /> New Chat
           </button>
@@ -81,7 +84,7 @@ export function ChatSidebar({
         <button
           onClick={onToggleCollapse}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="cursor-pointer rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+          className="cursor-pointer rounded-xl p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
@@ -89,7 +92,7 @@ export function ChatSidebar({
           <button
             onClick={onNewChat}
             aria-label="New chat"
-            className="cursor-pointer rounded-lg p-2 text-accent-300 transition-colors hover:bg-white/10"
+            className="cursor-pointer rounded-xl p-2 text-accent-300 transition-colors hover:bg-accent-500/15"
           >
             <MessageCirclePlus size={16} />
           </button>
@@ -99,7 +102,7 @@ export function ChatSidebar({
       {!collapsed && (
         <>
           {/* Thread list */}
-          <div className="min-h-0 flex-1 overflow-y-auto px-2">
+          <div className="min-h-0 flex-1 overflow-y-auto px-2.5">
             {threadsLoading ? (
               <p className="py-4 text-center text-xs text-slate-500">Loading…</p>
             ) : threads.length === 0 ? (
@@ -111,10 +114,10 @@ export function ChatSidebar({
                     <button
                       onClick={() => onOpenThread(thread.thread_id)}
                       className={cn(
-                        "flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors",
+                        "flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded-xl px-3 py-2 text-left text-[13px] transition-all",
                         currentThreadId === thread.thread_id
-                          ? "bg-white/15 text-white"
-                          : "text-slate-300 hover:bg-white/10",
+                          ? "bg-accent-500/15 text-white border border-accent-500/20 shadow-sm"
+                          : "text-slate-300 hover:bg-white/8 border border-transparent",
                       )}
                     >
                       {thread.is_favorite && (
@@ -127,7 +130,7 @@ export function ChatSidebar({
                     <button
                       onClick={() => onDeleteThread(thread.thread_id)}
                       aria-label={`Delete thread ${thread.title || "Untitled"}`}
-                      className="cursor-pointer rounded p-1.5 text-slate-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/10 hover:text-red-400"
+                      className="cursor-pointer rounded-lg p-1.5 text-slate-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/10 hover:text-red-400"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -138,24 +141,27 @@ export function ChatSidebar({
           </div>
 
           {/* Explore + modal menu */}
-          <div className="border-t border-white/10 p-2">
-            <p className="px-2.5 pt-1 pb-1.5 text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
+          <div className="border-t border-white/10 p-2.5">
+            <p className="px-3 pt-1 pb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
               Explore
             </p>
             {pageLinks.map((item) => (
               <button
                 key={item.label}
                 onClick={() => navigate(item.to)}
-                className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-slate-300 transition-all hover:bg-white/8 hover:text-white"
               >
                 <item.icon size={15} /> {item.label}
               </button>
             ))}
+
+            <div className="my-2 border-t border-white/5" />
+
             {modalLinks.map((item) => (
               <button
                 key={item.label}
                 onClick={() => onOpenModal(item.name)}
-                className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-slate-300 transition-all hover:bg-white/8 hover:text-white"
               >
                 <item.icon size={15} /> {item.label}
               </button>
@@ -165,12 +171,12 @@ export function ChatSidebar({
       )}
 
       {/* User section */}
-      <div className={cn("border-t border-white/10 p-2", collapsed && "flex flex-col items-center gap-1")}>
+      <div className={cn("border-t border-white/10 p-2.5", collapsed && "flex flex-col items-center gap-1")}>
         <button
           onClick={() => navigate("/")}
           title="Home"
           className={cn(
-            "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-slate-300 transition-colors hover:bg-white/10 hover:text-white",
+            "flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-slate-300 transition-all hover:bg-white/8 hover:text-white",
             collapsed ? "justify-center" : "w-full",
           )}
         >
@@ -178,12 +184,17 @@ export function ChatSidebar({
         </button>
         <div
           className={cn(
-            "flex items-center gap-2",
-            collapsed ? "justify-center" : "px-2.5 py-1.5",
+            "flex items-center gap-2 rounded-xl",
+            collapsed ? "justify-center" : "mt-1 bg-white/5 px-3 py-2",
           )}
         >
           {!collapsed && (
-            <span className="min-w-0 flex-1 truncate text-xs text-slate-500">{userEmail}</span>
+            <>
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-500/15 text-accent-400">
+                <User size={12} />
+              </div>
+              <span className="min-w-0 flex-1 truncate text-xs text-slate-400">{displayName || userEmail}</span>
+            </>
           )}
           <button
             onClick={onLogout}

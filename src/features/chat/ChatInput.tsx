@@ -36,7 +36,7 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
   return (
     <div className="border-t border-white/10 p-3 sm:p-4">
       {attachedFile && (
-        <div className="mb-2 flex items-center gap-2 text-xs text-accent-300">
+        <div className="mb-2 flex items-center gap-2 rounded-lg bg-accent-500/10 border border-accent-500/20 px-3 py-1.5 text-xs text-accent-300">
           <Paperclip size={12} />
           <span className="max-w-52 truncate">{attachedFile.name}</span>
           <button
@@ -49,7 +49,7 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
         </div>
       )}
 
-      <div className="glass flex items-center gap-2 rounded-2xl p-2">
+      <div className="glass-strong flex items-center gap-2 rounded-2xl border border-white/5 p-2 shadow-lg">
         <input
           type="file"
           ref={fileInputRef}
@@ -62,7 +62,7 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
           aria-label="Attach file"
           title="Attach a .txt, .pdf or .docx file"
           className={cn(
-            "cursor-pointer rounded-xl p-2 transition-colors hover:bg-white/10",
+            "cursor-pointer rounded-xl p-2 transition-all hover:bg-white/10 hover:scale-105",
             attachedFile ? "text-accent-400" : "text-slate-400",
           )}
         >
@@ -84,7 +84,7 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
             onClick={toggleVoice}
             aria-label={isListening ? "Stop voice input" : "Start voice input"}
             className={cn(
-              "cursor-pointer rounded-xl p-2 transition-colors hover:bg-white/10",
+              "cursor-pointer rounded-xl p-2 transition-all hover:bg-white/10 hover:scale-105",
               isListening ? "text-red-400" : "text-slate-400",
             )}
           >
@@ -96,7 +96,7 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
           onClick={handleSend}
           disabled={loading || !value.trim()}
           aria-label="Send message"
-          className="cursor-pointer rounded-xl bg-accent-500 p-2 text-white transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-40"
+          className="cursor-pointer rounded-xl bg-gradient-to-r from-accent-500 to-accent-600 p-2 text-white shadow-md shadow-accent-500/20 transition-all hover:shadow-lg hover:shadow-accent-500/30 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
         >
           <SendHorizonal size={18} />
         </button>

@@ -1,5 +1,5 @@
-import { lazy, Suspense, type ReactNode } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { SpaceBackground } from "@/components/layout/SpaceBackground";
 import { Spinner } from "@/components/ui/Spinner";
@@ -15,6 +15,16 @@ const ExplorerPage = lazy(() => import("@/pages/ExplorerPage"));
 const SatellitesPage = lazy(() => import("@/pages/SatellitesPage"));
 const SatelliteDetailPage = lazy(() => import("@/pages/SatelliteDetailPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -46,6 +56,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <SpaceBackground />
         <Suspense fallback={pageFallback}>
           <Routes>

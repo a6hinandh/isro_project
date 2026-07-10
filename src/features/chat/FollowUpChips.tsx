@@ -17,14 +17,15 @@ export function FollowUpChips({ suggestions, onSelect, disabled }: FollowUpChips
           className="flex flex-wrap gap-2 px-4 pb-2 sm:px-6"
         >
           {suggestions.map((s) => (
-            <button
+            <motion.button
               key={s}
+              whileHover={{ scale: 1.03 }}
               onClick={() => onSelect(s)}
               disabled={disabled}
-              className="glass cursor-pointer rounded-full px-3 py-1.5 text-xs text-accent-300 transition-colors hover:border-accent-400/40 hover:text-accent-200 disabled:opacity-50"
+              className="glass-strong cursor-pointer rounded-full border border-accent-400/20 px-3.5 py-1.5 text-xs font-medium text-accent-300 transition-colors hover:border-accent-400/40 hover:text-accent-200 disabled:opacity-50"
             >
               {s}
-            </button>
+            </motion.button>
           ))}
         </motion.div>
       )}

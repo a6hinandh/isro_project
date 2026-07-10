@@ -7,6 +7,7 @@ import type {
   SuggestionsResponse,
   UIMessage,
   UploadResponse,
+  Preferences,
 } from "@/lib/types";
 
 const MAX_MESSAGE_LENGTH = 4000;
@@ -77,6 +78,21 @@ export function useChat(initialThreadId: string | null = null) {
         };
         setMessages((prev) => [...prev, botMsg]);
         fetchSuggestions(trimmed, botMsg.text);
+
+        // Web Speech Synthesis playback if enabled in preferences
+        apiGet<Preferences>("/user/me")
+          .then((prefs) => {
+            if (prefs && prefs.voice_responses) {
+              const cleanText = (data.answer || "")
+                .replace(/[*#`_\-]/g, "")
+                .replace(/\[Attached file:[^\]]+\]/g, "")
+                .slice(0, 1000);
+              const utterance = new SpeechSynthesisUtterance(cleanText);
+              window.speechSynthesis.cancel();
+              window.speechSynthesis.speak(utterance);
+            }
+          })
+          .catch(() => {});
       } catch (err) {
         const text =
           err instanceof ApiError && err.status === 429
