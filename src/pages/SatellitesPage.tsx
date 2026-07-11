@@ -146,7 +146,7 @@ export default function SatellitesPage() {
             ].map((tabInfo) => (
               <button
                 key={tabInfo.id}
-                onClick={() => setActiveTab(tabInfo.id as any)}
+                onClick={() => setActiveTab(tabInfo.id as "all" | "insat" | "oceansat" | "others")}
                 className={cn(
                   "flex shrink-0 cursor-pointer items-center gap-2 rounded-xl px-3 sm:px-4 py-2 text-xs font-semibold border transition-all",
                   activeTab === tabInfo.id

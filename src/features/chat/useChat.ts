@@ -136,7 +136,7 @@ export function useChat(initialThreadId: string | null = null) {
         setLoading(false);
       }
     },
-    [currentThreadId, loading, fetchSuggestions],
+    [currentThreadId, loading, fetchSuggestions, locale],
   );
 
   const openThread = useCallback(async (threadId: string) => {
