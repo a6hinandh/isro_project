@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileText, MessagesSquare, Search as SearchIcon, ArrowRight, Eye, Copy, Check, ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
+import { FileText, MessagesSquare, Search as SearchIcon, ArrowRight, Copy, Check, ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Input } from "@/components/ui/Input";
