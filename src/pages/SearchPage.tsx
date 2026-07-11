@@ -7,7 +7,7 @@ import { Footer } from "@/components/landing/Footer";
 import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/Input";
 import { Spinner } from "@/components/ui/Spinner";
-import { apiGet } from "@/lib/api";
+import { apiGet, API_BASE } from "@/lib/api";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import type { DocSearchResult, SearchResult } from "@/lib/types";
 
@@ -22,7 +22,7 @@ function DocResultCard({ result: r, index: i }: { result: DocSearchResult; index
   const pdfUrl = r.source.startsWith("http")
     ? r.source
     : r.source.endsWith(".pdf")
-      ? `/api/pdfs/${r.source}`
+      ? `${API_BASE}/pdfs/${r.source}`
       : null;
 
   const handleCopy = async () => {
