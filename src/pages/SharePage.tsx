@@ -7,6 +7,7 @@ import { Spinner } from "@/components/ui/Spinner";
 import { Button } from "@/components/ui/Button";
 import { MessageBubble } from "@/features/chat/MessageBubble";
 import { API_BASE } from "@/lib/api";
+import { useLanguage } from "@/context/LanguageContext";
 import type { SharedThread, Source, UIMessage } from "@/lib/types";
 
 function parseSources(sourcesJson: string): Source[] {
@@ -20,6 +21,7 @@ function parseSources(sourcesJson: string): Source[] {
 
 /** Public read-only view of a shared conversation — no auth required. */
 export default function SharePage() {
+  const { t } = useLanguage();
   const { token = "" } = useParams<{ token: string }>();
   const [thread, setThread] = useState<SharedThread | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,22 +49,22 @@ export default function SharePage() {
       {error ? (
         <GlassPanel className="p-10 text-center">
           <h1 className="mb-2 text-xl font-bold text-white">
-            {error === "notfound" ? "This shared link doesn't exist" : "Something went wrong"}
+            {error === "notfound" ? t.share.notFound : t.share.error}
           </h1>
           <p className="mb-6 text-sm text-slate-400">
             {error === "notfound"
-              ? "The link may have been revoked by its owner."
-              : "Please try again in a moment."}
+              ? t.share.notFoundHint
+              : t.share.errorHint}
           </p>
           <Link to="/">
             <Button>
-              <Rocket size={16} /> Try Astra-Q
+              <Rocket size={16} /> {t.share.tryAstraQ}
             </Button>
           </Link>
         </GlassPanel>
       ) : thread === null ? (
         <GlassPanel className="flex items-center justify-center gap-3 p-16">
-          <Spinner /> <span className="text-slate-400">Loading shared conversation…</span>
+          <Spinner /> <span className="text-slate-400">{t.share.loading}</span>
         </GlassPanel>
       ) : (
         <motion.div
@@ -72,7 +74,7 @@ export default function SharePage() {
         >
           <div className="mb-6 text-center">
             <p className="mb-1 text-xs tracking-wider text-slate-500 uppercase">
-              Shared conversation
+              {t.share.sharedConversation}
             </p>
             <h1 className="text-2xl font-bold text-white">{thread.title}</h1>
           </div>
@@ -85,12 +87,11 @@ export default function SharePage() {
 
           <GlassPanel className="mt-10 flex flex-col items-center gap-3 p-6 text-center">
             <p className="text-sm text-slate-300">
-              Powered by <strong className="text-white">Astra-Q</strong> — AI answers
-              for ISRO&apos;s MOSDAC satellite data.
+              {t.share.poweredBy}
             </p>
             <Link to="/">
               <Button size="sm">
-                <Rocket size={15} /> Start your own conversation
+                <Rocket size={15} /> {t.share.startOwn}
               </Button>
             </Link>
           </GlassPanel>

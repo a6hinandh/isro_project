@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   ChevronLeft,
   ChevronRight,
@@ -36,19 +37,6 @@ interface ChatSidebarProps {
   onLogout: () => void;
 }
 
-const pageLinks = [
-  { icon: Search, label: "Global Search", to: "/search" },
-  { icon: Satellite, label: "Satellites", to: "/satellites" },
-  { icon: Network, label: "KG Explorer", to: "/explorer" },
-];
-
-const modalLinks: { icon: typeof Star; label: string; name: ChatModalName }[] = [
-  { icon: Star, label: "Favorites", name: "favorites" },
-  { icon: Settings, label: "Settings", name: "settings" },
-  { icon: CircleHelp, label: "Help", name: "help" },
-  { icon: MessageSquareHeart, label: "Feedback", name: "feedback" },
-];
-
 export function ChatSidebar({
   collapsed,
   onToggleCollapse,
@@ -64,6 +52,20 @@ export function ChatSidebar({
   onLogout,
 }: ChatSidebarProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  const pageLinks = [
+    { icon: Search, label: t.chat.globalSearch, to: "/search" },
+    { icon: Satellite, label: t.nav.satellites, to: "/satellites" },
+    { icon: Network, label: t.chat.kgExplorer, to: "/explorer" },
+  ];
+
+  const modalLinks: { icon: typeof Star; label: string; name: ChatModalName }[] = [
+    { icon: Star, label: t.favorites.title, name: "favorites" },
+    { icon: Settings, label: t.settings.title, name: "settings" },
+    { icon: CircleHelp, label: t.help.title, name: "help" },
+    { icon: MessageSquareHeart, label: t.feedback.title, name: "feedback" },
+  ];
 
   return (
     <motion.aside
@@ -78,12 +80,12 @@ export function ChatSidebar({
             onClick={onNewChat}
             className="flex flex-1 cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-accent-500/20 to-accent-500/10 px-3.5 py-2.5 text-sm font-bold text-accent-300 transition-all hover:from-accent-500/30 hover:to-accent-500/15 hover:shadow-lg hover:shadow-accent-500/10"
           >
-            <MessageCirclePlus size={16} /> New Chat
+            <MessageCirclePlus size={16} /> {t.chat.newChat}
           </button>
         )}
         <button
           onClick={onToggleCollapse}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? t.chat.expandSidebar : t.chat.collapseSidebar}
           className="cursor-pointer rounded-xl p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
@@ -104,9 +106,9 @@ export function ChatSidebar({
           {/* Thread list */}
           <div className="min-h-0 flex-1 overflow-y-auto px-2.5">
             {threadsLoading ? (
-              <p className="py-4 text-center text-xs text-slate-500">Loading…</p>
+              <p className="py-4 text-center text-xs text-slate-500">{t.chat.loadingThreads}</p>
             ) : threads.length === 0 ? (
-              <p className="py-4 text-center text-xs text-slate-500">No conversations yet</p>
+              <p className="py-4 text-center text-xs text-slate-500">{t.chat.noConversations}</p>
             ) : (
               <ul className="space-y-0.5">
                 {threads.map((thread) => (
@@ -143,7 +145,7 @@ export function ChatSidebar({
           {/* Explore + modal menu */}
           <div className="border-t border-white/10 p-2.5">
             <p className="px-3 pt-1 pb-2 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-              Explore
+              {t.chat.explore}
             </p>
             {pageLinks.map((item) => (
               <button
@@ -180,7 +182,7 @@ export function ChatSidebar({
             collapsed ? "justify-center" : "w-full",
           )}
         >
-          <Home size={15} /> {!collapsed && "Home"}
+          <Home size={15} /> {!collapsed && t.chat.home}
         </button>
         <div
           className={cn(

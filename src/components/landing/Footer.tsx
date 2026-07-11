@@ -17,7 +17,7 @@ export function Footer() {
   return (
     <div className="glass w-full rounded-none p-6 sm:p-10 border-x-0 border-b-0">
       <footer>
-        <div className="grid gap-8 sm:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Column 1: Brand (Col-span 2) */}
           <div className="sm:col-span-2">
             <div className="mb-3 flex items-center gap-3">

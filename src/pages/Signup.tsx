@@ -4,20 +4,22 @@ import { motion } from "framer-motion";
 import { FirebaseError } from "firebase/app";
 import { LockKeyhole, Mail, UserRoundPlus, ChevronRight, BrainCircuit, Database, Mic } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { mapSignupError } from "@/lib/authErrors";
 
-const perks = [
-  { icon: BrainCircuit, label: "RAG-powered document search", color: "text-accent-400" },
-  { icon: Database, label: "Knowledge graph exploration", color: "text-nebula-400" },
-  { icon: Mic, label: "Voice & document uploads", color: "text-star" },
-];
-
 export default function Signup() {
   const { signup } = useAuth();
+  const { t } = useLanguage();
+
+  const perks = [
+    { icon: BrainCircuit, label: t.signup.perk1, color: "text-accent-400" },
+    { icon: Database, label: t.signup.perk2, color: "text-nebula-400" },
+    { icon: Mic, label: t.signup.perk3, color: "text-star" },
+  ];
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,11 +32,11 @@ export default function Signup() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t.signup.passwordMismatch);
       return;
     }
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError(t.signup.passwordShort);
       return;
     }
 
@@ -62,20 +64,19 @@ export default function Signup() {
             className="hidden lg:block"
           >
             <h1 className="bg-gradient-to-r from-white via-slate-100 to-accent-300 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl">
-              Start Exploring
+              {t.signup.title}
               <br />
               <span className="bg-gradient-to-r from-accent-400 to-nebula-400 bg-clip-text">
-                with AstraQ.
+                {t.signup.brand}
               </span>
             </h1>
             <p className="mt-4 max-w-md text-base leading-relaxed text-slate-400">
-              Create your free account and get instant access to AI-powered
-              satellite data exploration.
+              {t.signup.subtitle}
             </p>
 
             <div className="mt-8 space-y-4">
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                What you get
+                {t.signup.whatYouGet}
               </p>
               {perks.map((perk) => (
                 <motion.div
@@ -111,9 +112,9 @@ export default function Signup() {
                   <UserRoundPlus size={24} className="text-accent-400" />
                 </div>
                 <h2 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-2xl font-extrabold text-transparent">
-                  Create Account
+                  {t.signup.createAccount}
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">Join AstraQ in under a minute</p>
+                <p className="mt-1 text-sm text-slate-500">{t.signup.joinSubtitle}</p>
               </div>
 
               {error && (
@@ -134,7 +135,7 @@ export default function Signup() {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email address"
+                    placeholder={t.login.email}
                     className="pl-10"
                     required
                   />
@@ -148,7 +149,7 @@ export default function Signup() {
                       autoComplete="new-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Password"
+                      placeholder={t.login.password}
                       className="pl-10"
                       required
                     />
@@ -159,23 +160,23 @@ export default function Signup() {
                     autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm password"
+                    placeholder={t.signup.confirmPassword}
                     required
                   />
                 </div>
                 <Button type="submit" size="lg" className="w-full relative overflow-hidden group font-semibold" disabled={loading}>
                   <span className="relative z-10 flex items-center gap-2">
                     <UserRoundPlus size={18} />
-                    {loading ? "Creating account…" : "Create Account"}
+                    {loading ? t.signup.submitting : t.signup.submit}
                     {!loading && <ChevronRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />}
                   </span>
                 </Button>
               </form>
 
               <div className="mt-6 text-center text-sm text-slate-500">
-                Already have an account?{" "}
+                {t.signup.haveAccount}{" "}
                 <Link to="/login" className="text-accent-300 transition-colors hover:text-accent-400 font-medium">
-                  Sign in
+                  {t.signup.signIn}
                 </Link>
               </div>
             </div>

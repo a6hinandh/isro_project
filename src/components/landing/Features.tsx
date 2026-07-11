@@ -1,15 +1,18 @@
 import { motion } from "framer-motion";
 import { BrainCircuit, Database, Lock, Mic } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function Features() {
+  const { t } = useLanguage();
+
   return (
     <section id="features" className="relative py-12 scroll-mt-28">
       <div className="mb-10 text-center md:text-left">
         <h2 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
-          Core Capabilities
+          {t.features.title}
         </h2>
         <p className="mt-2 max-w-2xl text-slate-400">
-          AstraQ is built on a precise pipeline combining vector databases, graph databases, and secure user management.
+          {t.features.subtitle}
         </p>
       </div>
 

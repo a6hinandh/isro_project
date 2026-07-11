@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import type { KGGraph, KGNode } from "@/lib/types";
 import { useNavigate } from "react-router-dom";
 import { NODE_COLORS } from "@/features/kg/nodeColors";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface GraphNode extends KGNode {
   x?: number;
@@ -24,6 +25,7 @@ interface GraphLink {
 }
 
 function EmptyPanel({ data }: { data: KGGraph }) {
+  const { t } = useLanguage();
   const typeCounts: Record<string, number> = {};
   for (const n of data.nodes) {
     typeCounts[n.type] = (typeCounts[n.type] || 0) + 1;
@@ -33,22 +35,22 @@ function EmptyPanel({ data }: { data: KGGraph }) {
       <div>
         <div className="mb-4 flex items-center gap-2 text-slate-400">
           <Info size={16} />
-          <span className="text-sm font-semibold">Graph Overview</span>
+          <span className="text-sm font-semibold">{t.explorer.graphOverview}</span>
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-2">
           <div className="rounded-lg bg-white/5 p-3 text-center">
             <p className="text-lg font-bold text-white">{data.nodes.length}</p>
-            <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Nodes</p>
+            <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">{t.explorer.nodes}</p>
           </div>
           <div className="rounded-lg bg-white/5 p-3 text-center">
             <p className="text-lg font-bold text-white">{data.edges.length}</p>
-            <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Edges</p>
+            <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">{t.explorer.edges}</p>
           </div>
         </div>
 
         <h4 className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-          By type
+          {t.explorer.byType}
         </h4>
         <div className="space-y-1.5">
           {Object.entries(typeCounts)
@@ -66,7 +68,7 @@ function EmptyPanel({ data }: { data: KGGraph }) {
       </div>
 
       <p className="mt-6 text-center text-xs text-slate-500">
-        Click a node to inspect it. Scroll to zoom, drag to pan.
+        {t.explorer.clickToInspect}
       </p>
     </div>
   );
@@ -83,6 +85,7 @@ function SelectedNodePanel({
   onClickNode: (node: KGNode) => void;
   onNavigate: (path: string, state?: { state: { prefill: string } }) => void;
 }) {
+  const { t } = useLanguage();
   const props = Object.entries(selected.properties).filter(([k]) => k !== "name");
   const grouped = new Map<string, { node: KGNode; relation: string }[]>();
   for (const n of neighbors) {
@@ -121,7 +124,7 @@ function SelectedNodePanel({
       {props.length > 0 && (
         <div className="mb-4 rounded-lg bg-white/5 p-3">
           <h4 className="mb-2 flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-            <Info size={11} /> Properties
+            <Info size={11} /> {t.explorer.properties}
           </h4>
           <dl className="space-y-1.5 text-sm">
             {props.map(([key, value]) => (
@@ -141,7 +144,7 @@ function SelectedNodePanel({
       {neighbors.length > 0 && (
         <div className="mb-4">
           <h4 className="mb-2 flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-            <Network size={11} /> Connections ({neighbors.length})
+            <Network size={11} /> {t.explorer.connections} ({neighbors.length})
           </h4>
           <div className="space-y-3">
             {[...grouped.entries()].map(([type, items]) => (
@@ -187,7 +190,7 @@ function SelectedNodePanel({
             className="justify-center"
             onClick={() => onNavigate(`/satellites/${encodeURIComponent(selected.label)}`)}
           >
-            <ExternalLink size={14} /> View satellite page
+            <ExternalLink size={14} /> {t.explorer.viewSatellitePage}
           </Button>
         )}
         <Button
@@ -199,7 +202,7 @@ function SelectedNodePanel({
             })
           }
         >
-          Ask Astra-Q about this
+          {t.explorer.askAstraQ}
         </Button>
       </div>
     </>
@@ -207,6 +210,7 @@ function SelectedNodePanel({
 }
 
 export default function GraphExplorer() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const graphRef = useRef<ForceGraphMethods<GraphNode, GraphLink> | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -324,9 +328,9 @@ export default function GraphExplorer() {
   if (error) {
     return (
       <GlassPanel className="p-8 text-center">
-        <p className="mb-2 font-semibold text-red-300">Knowledge graph unavailable</p>
+        <p className="mb-2 font-semibold text-red-300">{t.explorer.unavailable}</p>
         <p className="text-sm text-slate-400">
-          {error}. The Neo4j database may be paused — try again in a minute.
+          {error}. {t.explorer.unavailableHint}
         </p>
       </GlassPanel>
     );
@@ -335,7 +339,7 @@ export default function GraphExplorer() {
   if (!data) {
     return (
       <GlassPanel className="flex items-center justify-center gap-3 p-16">
-        <Spinner /> <span className="text-slate-400">Loading knowledge graph…</span>
+        <Spinner /> <span className="text-slate-400">{t.explorer.loading}</span>
       </GlassPanel>
     );
   }
@@ -345,14 +349,14 @@ export default function GraphExplorer() {
   return (
     <div className="space-y-4">
       {/* Controls */}
-      <GlassPanel className="flex flex-wrap items-center gap-3 p-4">
-        <div className="relative min-w-56 flex-1">
+      <GlassPanel className="flex flex-wrap items-center gap-3 p-3 sm:p-4">
+        <div className="relative w-full sm:min-w-56 sm:w-auto sm:flex-1">
           <Search size={15} className="absolute top-1/2 left-3 -translate-y-1/2 text-slate-500" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && focusSearch()}
-            placeholder="Find a node (e.g. INSAT-3D)…"
+            placeholder={t.explorer.findNode}
             className="pl-9"
           />
         </div>
@@ -379,7 +383,7 @@ export default function GraphExplorer() {
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         {/* Graph canvas */}
         <GlassPanel className="overflow-hidden">
-          <div ref={containerRef} className="h-[560px]">
+          <div ref={containerRef} className="h-[350px] sm:h-[450px] lg:h-[560px]">
             <ForceGraph2D
               ref={graphRef}
               width={size.width}
@@ -403,7 +407,7 @@ export default function GraphExplorer() {
         </GlassPanel>
 
         {/* Detail side panel */}
-        <GlassPanel className="max-h-[560px] overflow-y-auto p-5">
+        <GlassPanel className="max-h-[400px] lg:max-h-[560px] overflow-y-auto p-4 sm:p-5">
           {selected ? (
             <SelectedNodePanel
               selected={selected}

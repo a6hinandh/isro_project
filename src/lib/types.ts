@@ -46,6 +46,7 @@ export interface Preferences {
   voice_responses: boolean;
   system_persona: string;
   llm_temperature: number;
+  language: string;
 }
 
 export interface SearchResult {

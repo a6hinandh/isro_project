@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileText, MessagesSquare, Search as SearchIcon, ArrowRight, Copy, Check, ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
+import { FileText, MessagesSquare, Search as SearchIcon, ArrowRight, Copy, Check, ChevronDown, ChevronUp, MessageCircle, ExternalLink, AlertTriangle } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/landing/Footer";
+import { useLanguage } from "@/context/LanguageContext";
 import { Input } from "@/components/ui/Input";
 import { Spinner } from "@/components/ui/Spinner";
 import { apiGet } from "@/lib/api";
@@ -17,6 +18,12 @@ function DocResultCard({ result: r, index: i }: { result: DocSearchResult; index
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
   const filename = r.source.split("/").pop()?.split("\\").pop() || r.source;
+
+  const pdfUrl = r.source.startsWith("http")
+    ? r.source
+    : r.source.endsWith(".pdf")
+      ? `/api/pdfs/${r.source}`
+      : null;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(r.content_preview);
@@ -60,28 +67,39 @@ function DocResultCard({ result: r, index: i }: { result: DocSearchResult; index
           {r.content_preview}
         </p>
 
-        <div className="mt-3 flex items-center gap-2 border-t border-white/5 pt-3">
+        <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2 border-t border-white/5 pt-3">
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-            {expanded ? "Collapse" : "View full preview"}
+            {expanded ? "Collapse" : "Expand"}
           </button>
           <button
             onClick={handleCopy}
-            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             {copied ? <Check size={13} className="text-green-400" /> : <Copy size={13} />}
-            {copied ? "Copied" : "Copy text"}
+            {copied ? "Copied" : "Copy"}
           </button>
+          {pdfUrl && (
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-accent-400 transition-colors hover:bg-white/5 hover:text-accent-300"
+            >
+              <ExternalLink size={13} />
+              <span className="hidden sm:inline">Open</span> PDF
+            </a>
+          )}
           <button
             onClick={() =>
               navigate("/chat", {
                 state: { prefill: `Tell me about the document: ${filename}` },
               })
             }
-            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-accent-400 transition-colors hover:bg-accent-500/10 hover:text-accent-300 ml-auto"
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-accent-400 transition-colors hover:bg-accent-500/10 hover:text-accent-300 sm:ml-auto"
           >
             <MessageCircle size={13} />
             Ask AstraQ
@@ -93,6 +111,7 @@ function DocResultCard({ result: r, index: i }: { result: DocSearchResult; index
 }
 
 export default function SearchPage() {
+  const { locale } = useLanguage();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("docs");
   const [query, setQuery] = useState("");
@@ -143,6 +162,12 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      {locale === "hi" && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20 text-amber-300 px-4 py-2.5 text-center text-xs flex items-center justify-center gap-2">
+          <AlertTriangle size={14} className="shrink-0" />
+          <span>यह पृष्ठ हिन्दी में उपलब्ध नहीं है। (This page is not available in Hindi)</span>
+        </div>
+      )}
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
 
         {/* Hero header + search bar */}

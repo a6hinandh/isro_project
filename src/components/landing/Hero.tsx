@@ -3,11 +3,13 @@ import { motion } from "framer-motion";
 import { Rocket, BookOpen, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import isroRegistered from "@/assets/isro-registered.jpg";
 
 export function Hero() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <section className="relative overflow-hidden pt-2 pb-10 md:pt-4 md:pb-14 lg:pt-6 lg:pb-16">
@@ -21,17 +23,15 @@ export function Hero() {
           className="flex-1 text-center lg:text-left"
         >
           <h1 className="bg-gradient-to-r from-white via-slate-100 to-accent-300 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl md:text-6xl">
-            Intelligence from Orbit,
+            {t.hero.headline1}
             <br />
             <span className="bg-gradient-to-r from-accent-400 to-nebula-400 bg-clip-text">
-              Delivered by AstraQ.
+              {t.hero.headline2}
             </span>
           </h1>
 
           <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg max-w-2xl">
-            Simplify access to satellite datasets and remote sensing observations. 
-            AstraQ processes scientific inquiries into grounded, readable summaries, linking 
-            documentation and product relationships under a single conversational interface.
+            {t.hero.description}
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
@@ -42,7 +42,7 @@ export function Hero() {
             >
               <span className="relative z-10 flex items-center gap-2">
                 <Rocket size={18} />
-                Try AstraQ
+                {t.hero.tryAstraQ}
                 <ChevronRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
               </span>
             </Button>
@@ -51,7 +51,7 @@ export function Hero() {
               size="lg"
               onClick={() => navigate("/learn-more")}
             >
-              <BookOpen size={18} /> Learn more
+              <BookOpen size={18} /> {t.hero.learnMore}
             </Button>
           </div>
         </motion.div>

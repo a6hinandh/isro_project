@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Share2, Star } from "lucide-react";
+import { Menu, Share2, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useChat } from "@/features/chat/useChat";
 import { useThreads } from "@/features/chat/useThreads";
@@ -28,6 +29,7 @@ export default function ChatPage() {
   const { user, logout } = useAuth();
 
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [openModal, setOpenModal] = useState<ChatModalName | "share" | null>(null);
   const [displayName, setDisplayName] = useState("");
 
@@ -84,20 +86,34 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <ChatSidebar
-        collapsed={collapsed}
-        onToggleCollapse={() => setCollapsed((v) => !v)}
-        threads={threads}
-        threadsLoading={threadsLoading}
-        currentThreadId={chat.currentThreadId}
-        onNewChat={handleNewChat}
-        onOpenThread={handleOpenThread}
-        onDeleteThread={handleDeleteThread}
-        onOpenModal={setOpenModal}
-        userEmail={user?.email ?? null}
-        displayName={displayName}
-        onLogout={handleLogout}
-      />
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - hidden on mobile unless mobileOpen */}
+      <div className={cn(
+        "fixed inset-y-0 left-0 z-50 md:relative md:z-auto transition-transform duration-200 ease-out",
+        mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+      )}>
+        <ChatSidebar
+          collapsed={collapsed}
+          onToggleCollapse={() => setCollapsed((v) => !v)}
+          threads={threads}
+          threadsLoading={threadsLoading}
+          currentThreadId={chat.currentThreadId}
+          onNewChat={() => { handleNewChat(); setMobileOpen(false); }}
+          onOpenThread={(id) => { handleOpenThread(id); setMobileOpen(false); }}
+          onDeleteThread={handleDeleteThread}
+          onOpenModal={(name) => { setOpenModal(name); setMobileOpen(false); }}
+          userEmail={user?.email ?? null}
+          displayName={displayName}
+          onLogout={handleLogout}
+        />
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Header */}
@@ -105,15 +121,22 @@ export default function ChatPage() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="glass-strong flex items-center justify-between rounded-none border-x-0 border-t-0 px-5 py-3.5"
+          className="glass-strong flex items-center justify-between rounded-none border-x-0 border-t-0 px-3 py-3 sm:px-5 sm:py-3.5"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="cursor-pointer rounded-lg p-2 text-slate-300 hover:bg-white/10 md:hidden"
+              aria-label="Open sidebar"
+            >
+              <Menu size={20} />
+            </button>
             <img
               src="/logo.png"
               alt="AstraQ logo"
-              className="h-8 w-8 rounded-lg object-cover"
+              className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg object-cover"
             />
-            <h1 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-lg font-extrabold tracking-tight text-transparent">
+            <h1 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-base sm:text-lg font-extrabold tracking-tight text-transparent truncate max-w-[150px] sm:max-w-none">
               {currentThread?.title || "AstraQ"}
             </h1>
           </div>
@@ -132,7 +155,7 @@ export default function ChatPage() {
                   onClick={() => setOpenModal("share")}
                   title="Share conversation"
                   aria-label="Share conversation"
-                  className="cursor-pointer rounded-xl p-2 text-slate-400 transition-all hover:bg-white/10 hover:text-white hover:scale-105"
+                  className="cursor-pointer rounded-xl p-2 text-slate-400 transition-all hover:bg-white/10 hover:text-white hover:scale-105 hidden sm:block"
                 >
                   <Share2 size={18} />
                 </button>
@@ -164,6 +187,8 @@ export default function ChatPage() {
           onSend={(text, file) => void handleSend(text, file)}
           loading={chat.loading}
           maxLength={chat.MAX_MESSAGE_LENGTH}
+          isSpeaking={chat.isSpeaking}
+          onStopSpeaking={chat.stopSpeaking}
         />
       </div>
 

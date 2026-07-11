@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { SpaceBackground } from "@/components/layout/SpaceBackground";
 import { Spinner } from "@/components/ui/Spinner";
 import Landing from "@/pages/Landing";
@@ -54,6 +55,7 @@ const pageFallback = (
 
 export default function App() {
   return (
+    <LanguageProvider>
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
@@ -76,5 +78,6 @@ export default function App() {
         </Suspense>
       </BrowserRouter>
     </AuthProvider>
+    </LanguageProvider>
   );
 }

@@ -3,26 +3,28 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ChevronRight, ArrowRight, User, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-
-const appLinks = [
-  { to: "/chat", label: "Chat" },
-  { to: "/explorer", label: "Explorer" },
-  { to: "/satellites", label: "Satellites" },
-  { to: "/search", label: "Search" },
-];
-
-const publicLinks = [
-  { id: "features", label: "Features" },
-  { id: "query-lifecycle", label: "Query Lifecycle" },
-  { to: "/learn-more", label: "Architecture" },
-  { id: "faq", label: "FAQ" },
-];
 
 export function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  const appLinks = [
+    { to: "/chat", label: t.nav.chat },
+    { to: "/explorer", label: t.nav.explorer },
+    { to: "/satellites", label: t.nav.satellites },
+    { to: "/search", label: t.nav.search },
+  ];
+
+  const publicLinks = [
+    { id: "features", label: t.nav.features },
+    { id: "query-lifecycle", label: t.nav.queryLifecycle },
+    { to: "/learn-more", label: t.nav.architecture },
+    { id: "faq", label: t.nav.faq },
+  ];
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -135,7 +137,7 @@ export function Navbar() {
                 className="text-slate-400 hover:text-red-400 hover:bg-red-500/10"
                 onClick={handleLogout}
               >
-                Logout
+                {t.nav.logout}
               </Button>
               <Button
                 variant="nebula"
@@ -144,7 +146,7 @@ export function Navbar() {
                 onClick={() => navigate("/chat")}
               >
                 <span className="relative z-10 flex items-center gap-1">
-                  Launch AstraQ
+                  {t.nav.launchAstraQ}
                   <ChevronRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5" />
                 </span>
               </Button>
@@ -157,7 +159,7 @@ export function Navbar() {
                 className="hover:text-accent-300"
                 onClick={() => navigate("/login")}
               >
-                Login
+                {t.nav.login}
               </Button>
               <Button
                 variant="primary"
@@ -166,7 +168,7 @@ export function Navbar() {
                 onClick={() => navigate("/signup")}
               >
                 <span className="relative z-10 flex items-center gap-1">
-                  Sign Up
+                  {t.nav.signup}
                   <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5" />
                 </span>
               </Button>
@@ -178,7 +180,7 @@ export function Navbar() {
         <button
           className="cursor-pointer rounded-lg p-2 text-slate-300 hover:bg-white/10 md:hidden transition-colors"
           onClick={() => setMobileOpen((v) => !v)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-label={mobileOpen ? t.nav.closeMenu : t.nav.openMenu}
           aria-expanded={mobileOpen}
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -262,7 +264,7 @@ export function Navbar() {
                         navigate("/chat");
                       }}
                     >
-                      Launch AstraQ
+                      {t.nav.launchAstraQ}
                       <ChevronRight size={16} />
                     </Button>
                     <Button
@@ -275,7 +277,7 @@ export function Navbar() {
                       }}
                     >
                       <LogOut size={16} className="mr-2" />
-                      Logout
+                      {t.nav.logout}
                     </Button>
                   </div>
                 ) : (
@@ -288,7 +290,7 @@ export function Navbar() {
                         navigate("/login");
                       }}
                     >
-                      Login
+                      {t.nav.login}
                     </Button>
                     <Button
                       variant="primary"
@@ -298,7 +300,7 @@ export function Navbar() {
                         navigate("/signup");
                       }}
                     >
-                      Sign Up
+                      {t.nav.signup}
                     </Button>
                   </div>
                 )}

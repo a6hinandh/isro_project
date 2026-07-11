@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { LanguageContext } from "@/context/LanguageContext";
 import { apiGet, apiPost, apiUpload, ApiError } from "@/lib/api";
 import type {
   ChatResponse,
@@ -22,10 +23,15 @@ function parseSources(sourcesJson: string): Source[] {
 }
 
 export function useChat(initialThreadId: string | null = null) {
+  const langCtx = useContext(LanguageContext);
+  const locale = langCtx?.locale ?? "en";
+
   const [messages, setMessages] = useState<UIMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(initialThreadId);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const fetchSuggestions = useCallback((question: string, answer: string) => {
     // Fire-and-forget; chips simply don't render if this fails.
@@ -38,6 +44,12 @@ export function useChat(initialThreadId: string | null = null) {
     async (text: string, attachedFile?: File | null): Promise<void> => {
       const trimmed = text.trim();
       if (!trimmed || loading || trimmed.length > MAX_MESSAGE_LENGTH) return;
+
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+        utteranceRef.current = null;
+      }
 
       setSuggestions([]);
       const userMsg: UIMessage = {
@@ -66,6 +78,7 @@ export function useChat(initialThreadId: string | null = null) {
         const data = await apiPost<ChatResponse>("/chat", {
           thread_id: currentThreadId,
           message: trimmed + extraContext,
+          locale: locale,
         });
         if (data.thread_id) setCurrentThreadId(data.thread_id);
 
@@ -87,9 +100,26 @@ export function useChat(initialThreadId: string | null = null) {
                 .replace(/[*#`_-]/g, "")
                 .replace(/\[Attached file:[^\]]+\]/g, "")
                 .slice(0, 1000);
-              const utterance = new SpeechSynthesisUtterance(cleanText);
-              window.speechSynthesis.cancel();
-              window.speechSynthesis.speak(utterance);
+              
+              if (typeof window !== "undefined" && window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utteranceRef.current = utterance;
+
+                utterance.onstart = () => {
+                  setIsSpeaking(true);
+                };
+                utterance.onend = () => {
+                  setIsSpeaking(false);
+                  utteranceRef.current = null;
+                };
+                utterance.onerror = () => {
+                  setIsSpeaking(false);
+                  utteranceRef.current = null;
+                };
+
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+              }
             }
           })
           .catch(() => {});
@@ -110,6 +140,11 @@ export function useChat(initialThreadId: string | null = null) {
   );
 
   const openThread = useCallback(async (threadId: string) => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      utteranceRef.current = null;
+    }
     setCurrentThreadId(threadId);
     setSuggestions([]);
     try {
@@ -129,9 +164,30 @@ export function useChat(initialThreadId: string | null = null) {
   }, []);
 
   const newChat = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      utteranceRef.current = null;
+    }
     setCurrentThreadId(null);
     setMessages([]);
     setSuggestions([]);
+  }, []);
+
+  const stopSpeaking = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+    utteranceRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, []);
 
   return {
@@ -139,9 +195,11 @@ export function useChat(initialThreadId: string | null = null) {
     loading,
     currentThreadId,
     suggestions,
+    isSpeaking,
     send,
     openThread,
     newChat,
+    stopSpeaking,
     MAX_MESSAGE_LENGTH,
   };
 }

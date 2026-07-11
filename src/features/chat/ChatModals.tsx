@@ -1,35 +1,42 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Star, Volume2, Cpu, Sliders, Sparkles, BookOpen, User, ChevronRight } from "lucide-react";
+import { Star, Volume2, Cpu, Sliders, Sparkles, BookOpen, User, ChevronRight, Globe } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input, Select, Textarea } from "@/components/ui/Input";
 import { apiGet, apiPatch, apiPost } from "@/lib/api";
 import { formatRelativeTime } from "@/lib/utils";
+import { useLanguage } from "@/context/LanguageContext";
+import { LOCALE_LABELS, type Locale } from "@/lib/i18n";
 import type { Preferences, ThreadItem } from "@/lib/types";
 
 /* ---------------- Settings ---------------- */
 
 export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const { locale, setLocale, t } = useLanguage();
   const [prefs, setPrefs] = useState<Preferences>({
     display_name: "",
     voice_responses: false,
     system_persona: "standard",
     llm_temperature: 0.2,
+    language: locale,
   });
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    apiGet<Preferences>("/user/me").then(setPrefs).catch(() => {});
-  }, [isOpen]);
+    apiGet<Preferences>("/user/me")
+      .then((p) => setPrefs({ ...p, language: p.language || locale }))
+      .catch(() => {});
+  }, [isOpen, locale]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
       const updated = await apiPatch<Preferences>("/user/me", prefs);
-      setPrefs(updated);
+      setPrefs({ ...updated, language: updated.language || prefs.language });
+      setLocale(prefs.language as Locale);
       setSaved(true);
       setTimeout(() => setSaved(false), 1500);
     } catch {
@@ -42,7 +49,7 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const tempPercent = Math.round(prefs.llm_temperature * 100);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="User Preferences" className="max-w-3xl">
+    <Modal isOpen={isOpen} onClose={onClose} title={t.settings.title} className="max-w-3xl">
       <div className="grid gap-5 md:grid-cols-2">
 
         {/* Left Column */}
@@ -54,17 +61,17 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <User size={16} />
               </div>
               <h3 className="text-xs font-bold font-mono tracking-widest text-accent-400 uppercase">
-                Account
+                {t.settings.account}
               </h3>
             </div>
             <label className="block">
-              <span className="mb-1.5 block text-sm font-semibold text-slate-200">Display Name</span>
+              <span className="mb-1.5 block text-sm font-semibold text-slate-200">{t.settings.displayName}</span>
               <Input
                 value={prefs.display_name}
                 onChange={(e) => setPrefs({ ...prefs, display_name: e.target.value })}
-                placeholder="Enter your name"
+                placeholder={t.settings.displayNamePlaceholder}
               />
-              <span className="mt-1.5 block text-xs text-slate-500">How AstraQ greets you in the chat panel.</span>
+              <span className="mt-1.5 block text-xs text-slate-500">{t.settings.displayNameHint}</span>
             </label>
           </section>
 
@@ -75,20 +82,20 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 <Cpu size={16} />
               </div>
               <h3 className="text-xs font-bold font-mono tracking-widest text-nebula-400 uppercase">
-                Response Style
+                {t.settings.responseStyle}
               </h3>
             </div>
             <label className="block">
-              <span className="mb-1.5 block text-sm font-semibold text-slate-200">AI Persona</span>
+              <span className="mb-1.5 block text-sm font-semibold text-slate-200">{t.settings.aiPersona}</span>
               <Select
                 value={prefs.system_persona}
                 onChange={(e) => setPrefs({ ...prefs, system_persona: e.target.value })}
               >
-                <option value="standard">Standard (Grounded & Helpful)</option>
-                <option value="expert">Expert (Rigorous Academic Scientist)</option>
-                <option value="friendly">Friendly (Welcoming Space Guide)</option>
+                <option value="standard">{t.settings.personaStandard}</option>
+                <option value="expert">{t.settings.personaExpert}</option>
+                <option value="friendly">{t.settings.personaFriendly}</option>
               </Select>
-              <span className="mt-1.5 block text-xs text-slate-500">Adapts the system prompt for different tones.</span>
+              <span className="mt-1.5 block text-xs text-slate-500">{t.settings.personaHint}</span>
             </label>
           </section>
         </div>
@@ -103,7 +110,7 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   <Sliders size={16} />
                 </div>
                 <h3 className="text-xs font-bold font-mono tracking-widest text-accent-400 uppercase">
-                  Temperature
+                  {t.settings.temperature}
                 </h3>
               </div>
               <span className="rounded-lg border border-accent-400/20 bg-accent-400/10 px-2.5 py-1 text-xs font-bold font-mono text-accent-300">
@@ -126,8 +133,8 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
               className="mt-[-8px] relative z-10 w-full appearance-none bg-transparent cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-400 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-accent-500/30 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-space-900"
             />
             <div className="flex justify-between text-[10px] font-mono tracking-wider text-slate-500 mt-1">
-              <span>STRICT / FACTUAL</span>
-              <span>CREATIVE / FLUID</span>
+              <span>{t.settings.tempStrict}</span>
+              <span>{t.settings.tempCreative}</span>
             </div>
           </section>
 
@@ -140,14 +147,18 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 </div>
                 <div>
                   <h3 className="text-xs font-bold font-mono tracking-widest text-green-400 uppercase">
-                    Voice
+                    {t.settings.voice}
                   </h3>
-                  <span className="text-[11px] text-slate-500">Auto-play synthesized replies.</span>
+                  <span className="text-[11px] text-slate-500">{t.settings.voiceHint}</span>
+                  <span className="block text-[10px] text-amber-400/70 mt-0.5">{t.settings.voiceEnglishOnly}</span>
                 </div>
               </div>
               <button
+                disabled={prefs.language === "hi"}
                 onClick={() => setPrefs({ ...prefs, voice_responses: !prefs.voice_responses })}
-                className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer ${prefs.voice_responses ? "bg-accent-500" : "bg-white/10"}`}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors cursor-pointer ${
+                  prefs.voice_responses ? "bg-accent-500" : "bg-white/10"
+                } ${prefs.language === "hi" ? "cursor-not-allowed opacity-40" : ""}`}
                 role="switch"
                 aria-checked={prefs.voice_responses}
               >
@@ -156,6 +167,37 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
                 />
               </button>
             </div>
+          </section>
+
+          {/* Language Selector */}
+          <section className="glass-strong rounded-2xl border border-white/5 p-5">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex size-8 items-center justify-center rounded-xl bg-sky-400/10 text-sky-400">
+                <Globe size={16} />
+              </div>
+              <h3 className="text-xs font-bold font-mono tracking-widest text-sky-400 uppercase">
+                {t.settings.language}
+              </h3>
+            </div>
+            <div className="flex gap-2">
+              {(Object.entries(LOCALE_LABELS) as [Locale, string][]).map(([key, label]) => (
+                <button
+                  key={key}
+                  disabled={key === "hi" && prefs.voice_responses}
+                  onClick={() => setPrefs({ ...prefs, language: key })}
+                  className={`flex-1 cursor-pointer rounded-xl border px-3 py-2.5 text-sm font-semibold transition-all ${
+                    prefs.language === key
+                      ? "border-sky-400/40 bg-sky-400/10 text-sky-300"
+                      : key === "hi" && prefs.voice_responses
+                        ? "border-white/5 bg-white/[0.01] text-slate-600 cursor-not-allowed opacity-40"
+                        : "border-white/5 bg-white/[0.02] text-slate-400 hover:bg-white/5"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <span className="mt-2 block text-xs text-slate-500">{t.settings.languageHint}</span>
           </section>
         </div>
 
@@ -167,7 +209,7 @@ export function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
             disabled={saving}
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
-              {saved ? "Preferences Saved" : saving ? "Saving..." : "Save Preferences"}
+              {saved ? t.settings.saved : saving ? t.settings.saving : t.settings.save}
               {saved && <span className="text-green-300">&#10003;</span>}
             </span>
           </Button>

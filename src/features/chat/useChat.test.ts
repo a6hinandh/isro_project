@@ -126,4 +126,68 @@ describe("useChat", () => {
     expect(result.current.messages).toHaveLength(0);
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it("manages speech synthesis speaking status and stop/cancel actions", async () => {
+    const cancelMock = vi.fn();
+    const speakMock = vi.fn();
+    const mockSpeechSynthesis = {
+      cancel: cancelMock,
+      speak: speakMock,
+      speaking: false,
+    };
+    vi.stubGlobal("speechSynthesis", mockSpeechSynthesis);
+
+    class MockUtterance {
+      text: string;
+      onstart: (() => void) | null = null;
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(text: string) {
+        this.text = text;
+      }
+    }
+    vi.stubGlobal("SpeechSynthesisUtterance", MockUtterance);
+
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (String(url).endsWith("/user/me")) {
+        return Promise.resolve(jsonResponse({ voice_responses: true }));
+      }
+      if (String(url).endsWith("/chat")) {
+        return Promise.resolve(
+          jsonResponse({
+            answer: "Hello space explorer!",
+            sources: [],
+            mode: "rag",
+            thread_id: "thread_123",
+          }),
+        );
+      }
+      return Promise.resolve(jsonResponse({ suggestions: [] }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { result } = renderHook(() => useChat());
+    expect(result.current.isSpeaking).toBe(false);
+
+    await act(async () => {
+      await result.current.send("hello");
+    });
+
+    expect(cancelMock).toHaveBeenCalled();
+    expect(speakMock).toHaveBeenCalled();
+
+    const utterance = speakMock.mock.calls[0][0] as unknown as MockUtterance;
+    expect(utterance.text).toBe("Hello space explorer!");
+
+    act(() => {
+      utterance.onstart?.();
+    });
+    expect(result.current.isSpeaking).toBe(true);
+
+    act(() => {
+      result.current.stopSpeaking();
+    });
+    expect(cancelMock).toHaveBeenCalledTimes(3);
+    expect(result.current.isSpeaking).toBe(false);
+  });
 });

@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from "react";
-import { Mic, MicOff, Paperclip, SendHorizonal, X } from "lucide-react";
+import { Mic, MicOff, Paperclip, SendHorizonal, X, VolumeX } from "lucide-react";
 import { useSpeech } from "@/hooks/useSpeech";
 import { cn } from "@/lib/utils";
 
@@ -8,9 +8,18 @@ interface ChatInputProps {
   loading: boolean;
   maxLength: number;
   initialValue?: string;
+  isSpeaking?: boolean;
+  onStopSpeaking?: () => void;
 }
 
-export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: ChatInputProps) {
+export function ChatInput({
+  onSend,
+  loading,
+  maxLength,
+  initialValue = "",
+  isSpeaking = false,
+  onStopSpeaking,
+}: ChatInputProps) {
   const [value, setValue] = useState(initialValue);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,11 +82,22 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask about satellites, products, or MOSDAC data…"
+          placeholder="Ask about satellites, products…"
           maxLength={maxLength}
           className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
           aria-label="Message"
         />
+
+        {isSpeaking && onStopSpeaking && (
+          <button
+            onClick={onStopSpeaking}
+            aria-label="Stop response audio"
+            title="Stop response audio"
+            className="cursor-pointer rounded-xl p-2 text-slate-400 hover:text-red-400 transition-all hover:scale-105"
+          >
+            <VolumeX size={18} />
+          </button>
+        )}
 
         {speechSupported && (
           <button
