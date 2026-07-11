@@ -89,14 +89,8 @@ export default function SatellitesPage() {
                     </h2>
                   </div>
                   <Badge tone="accent" className="mb-3">
-                    {sat.products.length} product{sat.products.length !== 1 ? "s" : ""}
+                    {sat.products.length} data product{sat.products.length !== 1 ? "s" : ""}
                   </Badge>
-                  {sat.products.length > 0 && (
-                    <p className="line-clamp-2 text-xs text-slate-400">
-                      {sat.products.filter(Boolean).slice(0, 4).join(" · ")}
-                      {sat.products.length > 4 && " · …"}
-                    </p>
-                  )}
                 </GlassPanel>
               </Link>
             </motion.div>

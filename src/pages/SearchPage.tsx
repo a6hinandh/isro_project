@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileText, MessagesSquare, Search as SearchIcon, ArrowRight } from "lucide-react";
+import { FileText, MessagesSquare, Search as SearchIcon, ArrowRight, Eye, Copy, Check, ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Input } from "@/components/ui/Input";
@@ -11,6 +11,86 @@ import { cn, formatRelativeTime } from "@/lib/utils";
 import type { DocSearchResult, SearchResult } from "@/lib/types";
 
 type Tab = "docs" | "messages";
+
+function DocResultCard({ result: r, index: i }: { result: DocSearchResult; index: number }) {
+  const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const filename = r.source.split("/").pop()?.split("\\").pop() || r.source;
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(r.content_preview);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: Math.min(i * 0.05, 0.3) }}
+    >
+      <div className="glass-strong group rounded-2xl border border-white/5 p-5 shadow-lg transition-all duration-300 hover:border-accent-500/25">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <span className="flex items-center gap-2.5 text-sm font-bold text-accent-300 transition-colors group-hover:text-accent-200">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400">
+              <FileText size={14} />
+            </div>
+            <span className="truncate">{filename}</span>
+          </span>
+          {r.score != null && (
+            <span className="flex shrink-0 items-center gap-2.5">
+              <span className="h-1.5 w-16 overflow-hidden rounded-full bg-white/5" aria-hidden>
+                <span
+                  className="block h-full rounded-full bg-gradient-to-r from-accent-500 to-accent-300"
+                  style={{ width: `${Math.round(r.score * 100)}%` }}
+                />
+              </span>
+              <span className="text-[10px] font-bold font-mono tracking-wider text-slate-500">
+                {(r.score * 100).toFixed(0)}%
+              </span>
+            </span>
+          )}
+        </div>
+
+        <p className={cn(
+          "text-sm text-slate-300 leading-relaxed",
+          !expanded && "line-clamp-3",
+        )}>
+          {r.content_preview}
+        </p>
+
+        <div className="mt-3 flex items-center gap-2 border-t border-white/5 pt-3">
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+          >
+            {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            {expanded ? "Collapse" : "View full preview"}
+          </button>
+          <button
+            onClick={handleCopy}
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+          >
+            {copied ? <Check size={13} className="text-green-400" /> : <Copy size={13} />}
+            {copied ? "Copied" : "Copy text"}
+          </button>
+          <button
+            onClick={() =>
+              navigate("/chat", {
+                state: { prefill: `Tell me about the document: ${filename}` },
+              })
+            }
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-accent-400 transition-colors hover:bg-accent-500/10 hover:text-accent-300 ml-auto"
+          >
+            <MessageCircle size={13} />
+            Ask AstraQ
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function SearchPage() {
   const navigate = useNavigate();
@@ -189,37 +269,7 @@ export default function SearchPage() {
           {!loading && !error && tab === "docs" && docResults && docResults.length > 0 && (
             <div className="space-y-4">
               {docResults.map((r, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: Math.min(i * 0.05, 0.3) }}
-                >
-                  <div className="glass-strong group rounded-2xl border border-white/5 p-5 shadow-lg transition-all duration-300 hover:border-accent-500/25 hover:-translate-y-0.5">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <span className="flex items-center gap-2.5 text-sm font-bold text-accent-300 transition-colors group-hover:text-accent-200">
-                        <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400">
-                          <FileText size={14} />
-                        </div>
-                        {r.source.split("/").pop()?.split("\\").pop() || r.source}
-                      </span>
-                      {r.score != null && (
-                        <span className="flex shrink-0 items-center gap-2.5">
-                          <span className="h-1.5 w-16 overflow-hidden rounded-full bg-white/5" aria-hidden>
-                            <span
-                              className="block h-full rounded-full bg-gradient-to-r from-accent-500 to-accent-300"
-                              style={{ width: `${Math.round(r.score * 100)}%` }}
-                            />
-                          </span>
-                          <span className="text-[10px] font-bold font-mono tracking-wider text-slate-500">
-                            {(r.score * 100).toFixed(0)}%
-                          </span>
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-slate-300 leading-relaxed">{r.content_preview}</p>
-                  </div>
-                </motion.div>
+                <DocResultCard key={i} result={r} index={i} />
               ))}
             </div>
           )}

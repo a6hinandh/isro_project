@@ -18,7 +18,7 @@ export function Footer() {
     <div className="glass w-full rounded-none p-6 sm:p-10 border-x-0 border-b-0">
       <footer>
         <div className="grid gap-8 sm:grid-cols-4">
-          {/* Column 1: Brand & About AstraMind (Col-span 2) */}
+          {/* Column 1: Brand (Col-span 2) */}
           <div className="sm:col-span-2">
             <div className="mb-3 flex items-center gap-3">
               <img
@@ -31,9 +31,8 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm leading-relaxed text-slate-400 max-w-md">
-              AstraMind is a student-led group of data engineers, AI researchers, and space enthusiasts. 
-              We build intelligent interfaces connecting scientific datasets with modern language models, 
-              making complex space-derived observations accessible to everyone.
+              An AI-powered assistant for exploring ISRO&apos;s MOSDAC satellite datasets
+              through natural language queries, grounded in real documentation.
             </p>
           </div>
 
@@ -90,9 +89,14 @@ export function Footer() {
 
         {/* Lower row */}
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row">
-          <p className="text-sm text-slate-400">
-            © 2026 AstraQ · Grounded Research Sandbox
-          </p>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-slate-400">
+              © 2026 AstraQ · Satellite Data Assistant
+            </p>
+            <p className="text-xs text-slate-500">
+              Built by AstraMind — a student-led group of data engineers, AI researchers, and space enthusiasts.
+            </p>
+          </div>
           <div className="flex gap-6">
             <a
               href="https://github.com/a6hinandh/AstraQ_Frontend"
@@ -146,7 +150,7 @@ export function Footer() {
           </div>
           <p className="font-semibold text-white">1. Educational Purpose Only</p>
           <p>
-            AstraQ is a study sandbox created for educational and research exploration of meteorological and oceanographic satellite datasets. It is not affiliated with, sponsored by, or endorsed by ISRO.
+            AstraQ is an educational tool for exploring meteorological and oceanographic satellite datasets. It is not affiliated with, sponsored by, or endorsed by ISRO.
           </p>
           <p className="font-semibold text-white">2. Data Processing & Privacy</p>
           <p>

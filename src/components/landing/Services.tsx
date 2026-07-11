@@ -41,7 +41,7 @@ const flowSteps = [
 
 export function Services() {
   return (
-    <section className="relative py-12">
+    <section id="query-lifecycle" className="relative py-12 scroll-mt-28">
       <div className="mb-10 text-center">
         <h2 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
           The Query Lifecycle

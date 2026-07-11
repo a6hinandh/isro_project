@@ -142,6 +142,16 @@ export interface SatelliteDetail {
   [key: string]: unknown;
 }
 
+export interface DocPage {
+  url?: string;
+  title?: string;
+  headings?: string[];
+  paragraphs?: string[];
+  pdf_links?: string[];
+  metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 /** Local chat message model used by the UI */
 export interface UIMessage {
   type: "user" | "bot";

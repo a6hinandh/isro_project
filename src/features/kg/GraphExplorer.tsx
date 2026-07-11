@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2D, { type ForceGraphMethods } from "react-force-graph-2d";
-import { Search } from "lucide-react";
+import { Search, ExternalLink, Info, Network, Layers } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Spinner } from "@/components/ui/Spinner";
 import { GlassPanel } from "@/components/ui/GlassPanel";
@@ -21,6 +21,189 @@ interface GraphLink {
   source: number | GraphNode;
   target: number | GraphNode;
   label: string;
+}
+
+function EmptyPanel({ data }: { data: KGGraph }) {
+  const typeCounts: Record<string, number> = {};
+  for (const n of data.nodes) {
+    typeCounts[n.type] = (typeCounts[n.type] || 0) + 1;
+  }
+  return (
+    <div className="flex h-full flex-col justify-between">
+      <div>
+        <div className="mb-4 flex items-center gap-2 text-slate-400">
+          <Info size={16} />
+          <span className="text-sm font-semibold">Graph Overview</span>
+        </div>
+
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          <div className="rounded-lg bg-white/5 p-3 text-center">
+            <p className="text-lg font-bold text-white">{data.nodes.length}</p>
+            <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Nodes</p>
+          </div>
+          <div className="rounded-lg bg-white/5 p-3 text-center">
+            <p className="text-lg font-bold text-white">{data.edges.length}</p>
+            <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Edges</p>
+          </div>
+        </div>
+
+        <h4 className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+          By type
+        </h4>
+        <div className="space-y-1.5">
+          {Object.entries(typeCounts)
+            .sort(([, a], [, b]) => b - a)
+            .map(([type, count]) => (
+              <div key={type} className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="size-2.5 rounded-full" style={{ background: NODE_COLORS[type] ?? "#888" }} />
+                  <span className="text-slate-300">{type}</span>
+                </span>
+                <span className="text-xs font-mono text-slate-500">{count}</span>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      <p className="mt-6 text-center text-xs text-slate-500">
+        Click a node to inspect it. Scroll to zoom, drag to pan.
+      </p>
+    </div>
+  );
+}
+
+function SelectedNodePanel({
+  selected,
+  neighbors,
+  onClickNode,
+  onNavigate,
+}: {
+  selected: GraphNode;
+  neighbors: { node: KGNode; relation: string }[];
+  onClickNode: (node: KGNode) => void;
+  onNavigate: (path: string, state?: { state: { prefill: string } }) => void;
+}) {
+  const props = Object.entries(selected.properties).filter(([k]) => k !== "name");
+  const grouped = new Map<string, { node: KGNode; relation: string }[]>();
+  for (const n of neighbors) {
+    const key = n.node.type;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key)!.push(n);
+  }
+
+  return (
+    <>
+      <div className="mb-4 flex items-start gap-3">
+        <div
+          className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-xl border"
+          style={{
+            borderColor: `${NODE_COLORS[selected.type] ?? "#888"}40`,
+            backgroundColor: `${NODE_COLORS[selected.type] ?? "#888"}10`,
+            color: NODE_COLORS[selected.type] ?? "#888",
+          }}
+        >
+          <Layers size={20} />
+        </div>
+        <div className="min-w-0">
+          <Badge
+            tone="neutral"
+            className="mb-1"
+            style={{ color: NODE_COLORS[selected.type] ?? "#ccc" }}
+          >
+            {selected.type}
+          </Badge>
+          <h3 className="text-base font-bold break-words text-white leading-snug">
+            {selected.label}
+          </h3>
+        </div>
+      </div>
+
+      {props.length > 0 && (
+        <div className="mb-4 rounded-lg bg-white/5 p-3">
+          <h4 className="mb-2 flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+            <Info size={11} /> Properties
+          </h4>
+          <dl className="space-y-1.5 text-sm">
+            {props.map(([key, value]) => (
+              <div key={key}>
+                <dt className="text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+                  {key.replace(/_/g, " ")}
+                </dt>
+                <dd className="break-words text-slate-300">
+                  {Array.isArray(value) ? value.join(", ") : String(value)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      {neighbors.length > 0 && (
+        <div className="mb-4">
+          <h4 className="mb-2 flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+            <Network size={11} /> Connections ({neighbors.length})
+          </h4>
+          <div className="space-y-3">
+            {[...grouped.entries()].map(([type, items]) => (
+              <div key={type}>
+                <div className="mb-1 flex items-center gap-1.5">
+                  <span className="size-2 rounded-full" style={{ background: NODE_COLORS[type] ?? "#888" }} />
+                  <span className="text-[10px] font-bold tracking-wider text-slate-500 uppercase">{type}</span>
+                  <span className="text-[10px] text-slate-600">{items.length}</span>
+                </div>
+                <ul className="space-y-0.5">
+                  {items.slice(0, 8).map((n, i) => (
+                    <li key={i}>
+                      <button
+                        onClick={() => onClickNode(n.node)}
+                        className="flex w-full cursor-pointer items-baseline gap-1.5 rounded-md px-2 py-1 text-left text-sm transition-colors hover:bg-white/5"
+                      >
+                        <span className="shrink-0 text-[9px] font-mono text-slate-600 uppercase">
+                          {n.relation.replace("← ", "")}
+                        </span>
+                        <span className="truncate" style={{ color: NODE_COLORS[n.node.type] ?? "#ccc" }}>
+                          {n.node.label}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                  {items.length > 8 && (
+                    <li className="px-2 text-[10px] text-slate-600">
+                      +{items.length - 8} more
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-2 border-t border-white/5 pt-3">
+        {selected.type === "Satellite" && (
+          <Button
+            size="sm"
+            variant="secondary"
+            className="justify-center"
+            onClick={() => onNavigate(`/satellites/${encodeURIComponent(selected.label)}`)}
+          >
+            <ExternalLink size={14} /> View satellite page
+          </Button>
+        )}
+        <Button
+          size="sm"
+          className="justify-center"
+          onClick={() =>
+            onNavigate("/chat", {
+              state: { prefill: `Tell me about ${selected.label}` },
+            })
+          }
+        >
+          Ask Astra-Q about this
+        </Button>
+      </div>
+    </>
+  );
 }
 
 export default function GraphExplorer() {
@@ -222,86 +405,22 @@ export default function GraphExplorer() {
         {/* Detail side panel */}
         <GlassPanel className="max-h-[560px] overflow-y-auto p-5">
           {selected ? (
-            <>
-              <Badge
-                tone="neutral"
-                className="mb-2"
-                style={{ color: NODE_COLORS[selected.type] ?? "#ccc" }}
-              >
-                {selected.type}
-              </Badge>
-              <h3 className="mb-3 text-lg font-bold break-words text-white">
-                {selected.label}
-              </h3>
-
-              {Object.entries(selected.properties).filter(([k]) => k !== "name").length > 0 && (
-                <dl className="mb-4 space-y-1.5 text-sm">
-                  {Object.entries(selected.properties)
-                    .filter(([k]) => k !== "name")
-                    .slice(0, 8)
-                    .map(([key, value]) => (
-                      <div key={key}>
-                        <dt className="text-xs tracking-wide text-slate-500 uppercase">{key}</dt>
-                        <dd className="break-words text-slate-300">{String(value)}</dd>
-                      </div>
-                    ))}
-                </dl>
-              )}
-
-              {selectedNeighbors.length > 0 && (
-                <>
-                  <h4 className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                    Connections ({selectedNeighbors.length})
-                  </h4>
-                  <ul className="mb-4 space-y-1 text-sm">
-                    {selectedNeighbors.slice(0, 12).map((n, i) => (
-                      <li key={i} className="flex items-baseline gap-1.5">
-                        <span className="text-[10px] whitespace-nowrap text-slate-500">
-                          {n.relation}
-                        </span>
-                        <span
-                          className="truncate"
-                          style={{ color: NODE_COLORS[n.node.type] ?? "#ccc" }}
-                        >
-                          {n.node.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-
-              <div className="flex flex-col gap-2">
-                {selected.type === "Satellite" && (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => navigate(`/satellites/${encodeURIComponent(selected.label)}`)}
-                  >
-                    View satellite page
-                  </Button>
-                )}
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    navigate("/chat", {
-                      state: { prefill: `Tell me about ${selected.label}` },
-                    })
+            <SelectedNodePanel
+              selected={selected}
+              neighbors={selectedNeighbors}
+              onClickNode={(node) => {
+                const match = graphData.nodes.find((n) => n.id === node.id);
+                if (match) {
+                  setSelected(match);
+                  if (match.x != null && match.y != null && graphRef.current) {
+                    graphRef.current.centerAt(match.x, match.y, 400);
                   }
-                >
-                  Ask Astra-Q about this
-                </Button>
-              </div>
-            </>
+                }
+              }}
+              onNavigate={(path, state) => navigate(path, state)}
+            />
           ) : (
-            <div className="flex h-full flex-col items-center justify-center py-16 text-center">
-              <p className="mb-1 font-medium text-slate-300">
-                {data.nodes.length} nodes · {data.edges.length} relationships
-              </p>
-              <p className="text-sm text-slate-500">
-                Click a node to inspect it. Scroll to zoom, drag to pan.
-              </p>
-            </div>
+            <EmptyPanel data={data} />
           )}
         </GlassPanel>
       </div>

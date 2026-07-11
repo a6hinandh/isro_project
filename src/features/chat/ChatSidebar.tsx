@@ -67,7 +67,7 @@ export function ChatSidebar({
 
   return (
     <motion.aside
-      animate={{ width: collapsed ? 56 : 280 }}
+      animate={{ width: collapsed ? 56 : 240 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       className="glass-strong flex h-full shrink-0 flex-col overflow-hidden rounded-none border-y-0 border-l-0"
     >

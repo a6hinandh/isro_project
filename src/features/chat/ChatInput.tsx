@@ -34,7 +34,7 @@ export function ChatInput({ onSend, loading, maxLength, initialValue = "" }: Cha
   };
 
   return (
-    <div className="border-t border-white/10 p-3 sm:p-4">
+    <div className="p-3 sm:p-4">
       {attachedFile && (
         <div className="mb-2 flex items-center gap-2 rounded-lg bg-accent-500/10 border border-accent-500/20 px-3 py-1.5 text-xs text-accent-300">
           <Paperclip size={12} />

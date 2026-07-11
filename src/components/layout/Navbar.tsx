@@ -15,6 +15,7 @@ const appLinks = [
 
 const publicLinks = [
   { id: "features", label: "Features" },
+  { id: "query-lifecycle", label: "Query Lifecycle" },
   { to: "/learn-more", label: "Architecture" },
   { id: "faq", label: "FAQ" },
 ];

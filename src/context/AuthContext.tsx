@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setTokenProvider(firebaseUser ? () => firebaseUser.getIdToken() : null);
       setUser(firebaseUser);
       setLoading(false);
     });
