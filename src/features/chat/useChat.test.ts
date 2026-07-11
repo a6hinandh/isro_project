@@ -176,7 +176,9 @@ describe("useChat", () => {
     expect(cancelMock).toHaveBeenCalled();
     expect(speakMock).toHaveBeenCalled();
 
-    const utterance = speakMock.mock.calls[0][0] as unknown as MockUtterance;
+    const firstCall = speakMock.mock.calls[0];
+    if (!firstCall) throw new Error("speakMock was not called");
+    const utterance = firstCall[0] as unknown as MockUtterance;
     expect(utterance.text).toBe("Hello space explorer!");
 
     act(() => {

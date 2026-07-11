@@ -411,7 +411,7 @@ const en = {
     warmingUp:
       "The backend server is waking up — this can take up to a minute on the first visit.",
   },
-} as const;
+};
 
 const hi: typeof en = {
   nav: {
